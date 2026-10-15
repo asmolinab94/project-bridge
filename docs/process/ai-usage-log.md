@@ -353,3 +353,15 @@
   is PF-20260930); "PROC-<date>" is only the tool's own label for the processor entry it proposes (E01, E02 and the
   matching exceptions). The session caught it re-reading the file before Andrés checked, and corrected the demo
   script, which mixed the two.
+
+- **2026-10-15 (session 5) — Final review of the whole package before sending.** A fresh Opus agent, given only what
+  Clara receives (email text, attachments, case PDF and zip, the public repository), re-ran the tool (all eight CSVs
+  byte-identical), recomputed the headline figures with its own script (all matching) and checked every claim in the
+  email. Verdict: send after text fixes. **What the AI got wrong, and the review caught**: this log pointed to
+  internal notes and private commit ids the reader cannot open, carried contradictory date labels, and explained the
+  PROC-/PF- slip in a way that would send a Controller looking for an id the ledger does not have; the annex said every
+  exception row carries the customer (five Mastercard-only rows do not); the email promised two findings and described
+  one, and said the README explains what the tool found (it explains what it reads and writes). **What Andrés
+  decided**: a short email, since the detail lives in the repository and the attachments, keeping one heads-up with
+  the payable figure. The session had first proposed adding detail to the email; Andrés pushed back and was right.
+  All fixes are text only; the tool is unchanged. A second pass by the same reviewer confirmed them.
