@@ -4,7 +4,8 @@
 id: project-bridge
 project: clara-caso-finance (bundle personal)
 lineage_ref: row "Reconciliation tool, Part 1" of the project board; scope approved by Andrés in session on 2026-10-14 (project decision log)
-status: approved
+status: delivered
+delivered_at: 2026-10-15
 approved_by: G-2026-10-15-03
 approved_at: 2026-10-14 19:58
 translated: 2026-10-14 — English translation at Andrés's request, no change in content; the approved Spanish text is commit 8a5a95f
@@ -111,7 +112,7 @@ reconciling; FX rate = network rate (`fx_rates_daily.csv`); connections only wri
 the entry's total debits; Mastercard invoice accrued by line item; Treasury view with an illustrative buffer; tests
 with the verified figures before the tool; minimum first, extras after.
 Policy rules, one by one: `clara_caso_finance/REGLAS-politica.md`. Verified figures:
-the data findings note (`hallazgos-datos-2026-10-14.md`, kept outside this repository).
+the data findings note (`docs/process/data-findings-2026-10-14.md`).
 
 ## Deliverables — index
 
@@ -282,6 +283,60 @@ Created: `run.py`, `bridge/__init__.py`, `bridge/policy.py`, `bridge/inputs.py`,
 | V13 | No 13–19 digit string outside `MC` references in the outputs, after normalising the raw ones | I10 |
 | V14 | Manual demo in Chrome with `index.html` opened as a file: filter by class, country, date and amount; drill down to the source row of every file; assign owner, status and comment, reload and see them; export CSV | I1 |
 
+## As delivered (2026-10-15)
+
+What was handed over: the single-file page `index.html` (five screens, opens offline), eight CSV files and
+`run_manifest.json`, ten files in all, written by `python3 run.py --data <dir> --out <dir>`. The code is frozen at tag
+`tool-frozen-3-2026-10-15` (commit 20115be on `feat/project-bridge`); the public copy holds the same code as one
+commit, c68e35d. The suite runs 534 tests and all pass in both repositories (run on 2026-10-15 with
+`BRIDGE_DATA=<insumos/datos> python3 -I -m unittest`). Where Part 2 above differs from this section, this section and
+`plan.md` are what was built: Part 2 describes the approved design, the plan records each change made to it.
+
+### Changed after approval
+
+Section headings are those of `plan.md`; the first row covers the bold blocks inside Contracts. Each row is a round Andrés asked for or a fresh review forced; none moved a
+reconciliation figure unless the row says so.
+
+| What changed | Why | Plan section to read |
+|---|---|---|
+| Verifier and repair readings, 14–15 Oct: leg 3 pairs bank lines to ledger entries one to one by reference and amount; a pair is "in transit" only across the cut-off, in both directions; every cut-off-crossing pair gets an exception row; each difference has two owners (who fixes it, which Clara role follows it) and an action; a late posting gets a proposed September entry (entry id continues after the last one; none on the case data); a coverage check reads one period column per file; a blank Clara owner fails a check; plus fixed output formats and test-pinned values | The verifier, fresh reviews and four repair reviews found readings the contract left open | The bold "Readings" blocks inside Contracts: Readings fixed by the verifier; Output formats fixed by the verifier; Second-review readings; Third-review readings; Readings found during implementation; Closing-review readings; Readings after the repair review; after the second, third and fourth repair review |
+| USD conversion error is corrected like the other processor errors; the feed clause belongs to Finance Ops; an old unpaid settlement says to escalate after 5 business days; month cut-off sits with Finance Ops | Fifth repair review, and the policy's wording | Readings after the fifth repair review |
+| Side panel and "By figure" tab replaced by a summary per category on every tab and one table of all rows below, source fields inline | Andrés: the analyst lost which row they were on | Page: a summary by category on every tab, all rows in one table below |
+| Mastercard invoice accrued line by line (entry 5), Treasury view and `treasury.csv`, a Mastercard-owned conversion error gets an adjustment entry | Andrés asked for the extras (E8, E9) before submission | Extras before submission: itemised invoice, Treasury view, Mastercard's own conversion error |
+| Tabs replaced by five screens (Summary, Data quality, Reconciliation, Pending actions, Close); drafted messages that are never sent | Andrés: organise by who uses the page; fixes two findings of review 6 | Five screens by the person who operates them |
+| Leg 1 adds up on the first screen, checklist status kept as the checklist has it, grouped views match the Summary, drafts follow who fixes | Fresh review of the five screens (not ready) | Repairs after the five-screens review |
+| Payable 2105 reconciled against Mastercard's own files instead of an amount implied by the processor file | Andrés: reconcile it the way a controller reconciles a payable | The Mastercard payable reconciled against Mastercard |
+| Payable bridge reads as plain subtraction and every link opens rows that sum to its figure | Fresh review of the payable bridge (not ready) | The payable bridge reads on its own, and the last page fixes |
+| Entry lines cite only real evidence again; a missing input no longer crashes the run; bridge words computed, not stated | Closing review 2 (not ready); the session's own earlier error | Honest evidence on every entry line, and the closing fixes |
+| Waterfalls per pair of records, click-to-open explanations, USD each action resolves, ERP import file `proposed_journal_lines.csv` (tenth file) | Andrés, last round before freezing | Last round before freezing: waterfalls, impact per action, ERP file, explanations |
+| Waterfall bars show what they sum, Summary fits 1440x813, printable Pending actions, headline split, Data quality as a filterable table, Reconciliation read by type | Closing review 4, and Andrés on the repeated dates | Freeze fixes from the closing review of the last round (review-closing-4-2026-10-15.md) |
+| A figure opens exactly as many rows as it says (130 data flags hidden only on the bare view); copy matches what is on screen; headline reads "needs action by Clara" | Closing review 5, and Andrés on the label | Freeze fixes 2, from closing review 5 (review-closing-5-2026-10-15.md) |
+| Names of owners from the email thread beside their role; two new columns (`owner_name`, `clara_owner_name`) | Andrés, after the first freeze | Named owners from the email thread (Andrés, 2026-10-15, after the freeze) |
+| Modern visual style, template only; no figure, text or test changed | Andrés: the page was too flat | Modern visual style (Andrés, 2026-10-15, session 2, after the second freeze) |
+
+### Not built
+
+Everything the spec listed as optional (messages per exception type, itemised invoice, Treasury view) was built. These
+stayed out, as the spec's "Out of scope" says, and a search of `bridge/` and `run.py` finds no code for them:
+live connections to the processor, Mastercard, bank, ledger or email; shared state between analysts (notes live in
+the browser); a question-answering agent; margin by product, customer and country; a target balance and the cost of
+idle cash (the Treasury view suggests a weekly transfer, labelled illustrative). Posting entries is never done: every
+entry is `proposed` or `proposed-conditional`, and the drafted messages are never sent.
+
+### Headline figures
+
+Read from the frozen run in `salida-pagina/` (case workspace), generated by code 20115be.
+
+| Figure | Value | Output file |
+|---|---|---|
+| Leg 1 difference, processor vs Mastercard, explained with 0.00 left over | 15,600.17 | `run_manifest.json` (`totals.leg1_difference_usd`, `unexplained_total_usd`) |
+| Payable 2105 before | 70,588.66 on the debit side, the wrong side | `balances.csv` (`before`) |
+| Payable 2105 after, entries with no condition only | 54,700.22 credit | `balances.csv` (`after_confirmed`) |
+| Payable 2105 after, all entries | 45,572.30 credit, equal to Mastercard's unpaid 30-Sep settlement plus the September items it cleared in October | `balances.csv` (`after_all`) |
+| Cash unreconciled (ledger 1,547,965.55 less 400,000.00 in transit, bank 1,147,965.55) | 0.00 | `cash_recon.csv` |
+| Proposed entries | 11 (9 proposed, 2 conditional on evidence) | `proposed_entries.csv` |
+| Exceptions | 262 (131 data flags, 124 real errors, 7 timing) | `exceptions.csv`, `run_manifest.json` (`totals.exceptions_by_class`) |
+
 ## Decision log
 
 - 2026-10-14 — initial draft from the conversation with Andrés. decided: the session, within the approved scope.
@@ -298,3 +353,4 @@ Created: `run.py`, `bridge/__init__.py`, `bridge/policy.py`, `bridge/inputs.py`,
 - 2026-10-14 — escalation by age widened to every money difference on all three legs, as the policy reads ("open
   reconciling items older than 5 business days"); found by the test-building agent, measured by the session.
   decided: Andrés, in session («Si porf» [Yes please]).
+- 2026-10-15 — closed as delivered; Andrés approved closing in session. decided: Andrés, in session.
