@@ -1,6 +1,6 @@
 # Project Bridge — PRD-lite
 
-*Andrés Molina · draft 2026-10-14, updated 2026-10-15 · long version; the submitted PRD is `01-PRD-lite.onepage.md`*
+*Andrés Molina · draft 2026-10-14, updated 2026-10-15 · long version; the submitted PRD is the one-page version*
 
 ## Problem
 

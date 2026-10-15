@@ -1,7 +1,7 @@
 # Project Bridge — path to production
 
 *Andrés Molina · draft 2026-10-15 · Part 3 of the Clara Finance Engineer case · figures from the tool's run on the
-case data pack · detail in the annex (`03-annex.md`)*
+case data pack · detail in the annex*
 
 Project Bridge is one Python program that reads the data pack and writes a page plus nine files: 262 exceptions,
 11 proposed entries, none posted (`run_manifest.json`). Proof the entries are right: after all of them the Mastercard
@@ -19,7 +19,7 @@ who approved each entry; today it does not, so "preparer ≠ approver" cannot be
 ## Security with AI tools
 
 The reconciliation uses no AI: it is tested code, so the same inputs give the same figures. The code was written
-with AI through reviewed commits, prompts logged (`registro-ia.md`). The agents proposed below
+with AI through reviewed commits, each step recorded in the AI usage log. The agents proposed below
 would read free text nobody at Clara wrote (email, bank narratives), which can carry instructions; that is contained
 by what they can do, not by trusting them: read-only tools, every figure cited to a file and row, any write queued
 for human approval, each question and answer logged with the run it read, as the policy requires of AI-assisted

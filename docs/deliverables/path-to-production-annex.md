@@ -1,6 +1,6 @@
 # Project Bridge — path to production, annex
 
-*Detail behind `03-path-to-production.md`. Figures from the tool's run on the case data pack.*
+*Detail behind the path-to-production note. Figures from the tool's run on the case data pack.*
 
 ## A. Customers were billed on processor errors
 
