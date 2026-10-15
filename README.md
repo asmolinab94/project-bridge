@@ -1,0 +1,94 @@
+# Project Bridge
+
+Reconciles the card programme (processor, Mastercard, bank, ledger) for September 2026 and proposes the close.
+Nothing is posted: every journal entry is a proposal. Python 3.9 standard library only; no install step.
+
+## What it sees, and what it does not
+
+Bank-side checks cover one account only: the USD bridge account, through its bank statement
+(`bridge_account_statement.csv`), against ledger account 1110. Other bank accounts, such as the treasury account that
+funds the bridge account or the account that sent an unidentified receipt, are outside the inputs and are not
+reconciled. Without that statement the cash check fails rather than estimating a bank balance.
+
+## How to run it
+
+You need Python 3 (3.9 or later) and nothing else: no packages to install, no internet connection.
+
+**1. Install Python 3**
+
+- macOS: open Terminal and type `python3 --version`. If it prints a version (3.9 or later), you are done. On a Mac
+  without Apple's developer tools, the command instead opens a prompt to install the "command line developer tools":
+  accepting it is fine and installs a suitable Python 3. Otherwise download the macOS installer from
+  https://www.python.org/downloads/ and run it.
+- Windows: download the Windows installer from https://www.python.org/downloads/ and run it; on the first screen tick
+  "Add python.exe to PATH". Then open PowerShell (or Command Prompt) and type `py --version` to check.
+
+**2. Put the input files in one folder**
+
+Use a folder of your choice, for example `inputs` next to this README. Put in it the case pack's 13 files, with the
+same file names and the same columns: `processor_transactions.csv`, `mastercard_clearing_detail.csv`,
+`mastercard_daily_settlement_summary.csv`, `bridge_account_statement.csv`, `gl_journal_lines.csv`,
+`gl_opening_balances.csv`, `fx_rates_daily.csv`, `customers.csv`, `close_checklist.csv`, `treasury_email_thread.txt`,
+`mastercard_fee_notice.txt`, `README_data_dictionary.md` and `recon_and_close_policy.md`. The tool reads the first
+eleven; the last two are reference documents and may stay in the folder. If the processor's invoice
+(`processor_invoice.txt`) arrives, put it there too. The folder is only read, never changed.
+
+**3. Run the one command**
+
+Open a terminal in this folder, the one with `run.py` (the unzipped code folder):
+
+- macOS: in Finder, right-click the folder and choose Services > New Terminal at Folder; or open Terminal, type `cd `
+  (with the space) and drag the folder onto the window, then press Return.
+- Windows: open the folder in File Explorer, click the address bar, type `cmd` and press Enter.
+
+Then type, on macOS:
+
+```
+python3 run.py --data inputs --out results
+```
+
+On Windows, the same with `py` in place of `python3`:
+
+```
+py run.py --data inputs --out results
+```
+
+`--data` is the input folder and `--out` the folder for the results; it is created if missing. The run takes a few
+seconds and ends with "Wrote the output files to results".
+
+**4. Open the page**
+
+The page is `results/index.html`. Double-click it (or drag it onto a browser window): it opens in any browser, with no
+internet needed. Start on Summary; every figure opens the rows behind it, and a small "i" next to a figure explains it.
+
+**The period.** The run is built for September 2026. The month is declared in `bridge/policy.py`: `PERIOD_START`,
+`PERIOD_END`, `HOLIDAYS` (the bank holidays that are not working days) and `CUTOFF_DATE` (the close day that ageing
+and escalation count to). Another month needs those four changed and its files supplied, and also needs the wording
+that names September and October (entry titles and some explanations) reviewed: the month is declared, not fully
+parametrised.
+
+**What it writes.** The output folder receives ten files:
+
+- `index.html`: the page, one self-contained file.
+- `exceptions.csv`: every difference found, with its type, who fixes it and what to do.
+- `proposed_entries.csv`: the proposed journal entries, line by line, with their approval level.
+- `proposed_journal_lines.csv`: the same lines in the columns of `gl_journal_lines.csv`, ready to load into the ERP;
+  every line is marked `PROPOSED_NOT_APPROVED`.
+- `balances.csv`: account balances before and after the proposed entries.
+- `cash_recon.csv`: the bridge account 1110 against the bank statement.
+- `close_tracker.csv`: the close checklist with what blocks each task.
+- `checks.csv`: the checks run on the inputs.
+- `treasury.csv`: the bridge account's daily balance and Mastercard debits.
+- `run_manifest.json`: input fingerprints, code version, time and totals.
+
+Every CSV row but those of `proposed_journal_lines.csv` has a `src` column naming the input file and line it comes
+from; each line of `proposed_journal_lines.csv` is the line of `proposed_entries.csv` in the same position.
+
+## Run the tests
+
+```
+BRIDGE_DATA=<folder with the input files> python3 -m unittest -v
+```
+
+`BRIDGE_DATA` is required; the suite fails, not skips, without it. Add `-I` to ignore the environment, and set
+`PYTHONDONTWRITEBYTECODE=1` to keep the repo free of `__pycache__` folders.

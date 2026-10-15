@@ -1,0 +1,1418 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Bridge</title>
+<style>
+@font-face { font-family: "DM Sans"; font-weight: 400 700; font-style: normal;
+  src: url(data:font/ttf;base64,__FONT_DMSANS__) format("truetype"); }
+@font-face { font-family: "Inter"; font-weight: 400 700; font-style: normal;
+  src: url(data:font/ttf;base64,__FONT_INTER__) format("truetype"); }
+:root {
+  --ink: #101828; --muted: #475467; --faint: #5F6B7E; --line: #E4E7EC; --soft: #F4F6FA; --bg: #ECEFF5; --card: #FFFFFF;
+  --accent: #4338CA; --accent-strong: #3730A3; --accent-soft: #EEEDFD; --accent-mid: #B4B0F0;
+  --bad: #B42318; --bad-soft: #FEF0EE; --good: #067647; --good-soft: #E7F6EE;
+  --night: #0E1526; --night-2: #1B2445; --night-text: #C3CADB; --night-faint: #A0AABF;
+  --radius: 14px; --radius-sm: 8px;
+  --shadow: 0 1px 2px rgba(16, 24, 40, .05), 0 4px 14px rgba(16, 24, 40, .06);
+  --shadow-up: 0 2px 4px rgba(16, 24, 40, .06), 0 10px 24px rgba(16, 24, 40, .10);
+  --head: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+  --body: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+}
+* { box-sizing: border-box; font-style: normal; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 13px/1.45 var(--body); }
+h1, h2, h3, th, button, .tab { font-family: var(--head); font-weight: 700; }
+b, strong { font-weight: 700; }
+.num, td.num, th.num, .fn, .fu, .wamt { font-variant-numeric: tabular-nums; }
+
+/* Header: a dark band with the identity, the five screens as tabs that open onto the page below */
+header { background: linear-gradient(120deg, var(--night) 0%, var(--night-2) 100%); color: #FFFFFF;
+  padding: 12px 24px 0; box-shadow: 0 1px 0 rgba(255, 255, 255, .04) inset; }
+header .top { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+header h1 { margin: 0; font-size: 20px; line-height: 1.2; letter-spacing: -.015em; color: #FFFFFF; }
+header h1 .period { font: 500 15px var(--head); color: var(--night-text); margin-left: 10px; padding-left: 10px;
+  border-left: 1px solid rgba(255, 255, 255, .22); }
+header .line { margin: 2px 0 0; color: var(--night-text); font-size: 12px; }
+header .meta { margin: 0; color: var(--night-faint); font-size: 11px; white-space: nowrap; }
+nav { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 10px; }
+nav .tabwrap { display: flex; align-items: center; border-radius: 10px 10px 0 0; transition: background .15s; }
+nav .tabwrap:hover { background: rgba(255, 255, 255, .08); }
+nav .tabwrap.on { background: var(--bg); }
+.tab { background: transparent; color: var(--night-text); border: 0; border-radius: 10px 10px 0 0;
+  padding: 8px 4px 9px 14px; font-size: 13px; cursor: pointer; }
+.tab:hover { color: #FFFFFF; }
+nav .tabwrap.on .tab { color: var(--ink); }
+nav .tabwrap .i { margin-right: 10px; }
+nav .tabwrap:not(.on) button.i { background: transparent; border-color: var(--night-faint); color: var(--night-text); }
+nav .tabwrap:not(.on) button.i:hover, nav .tabwrap:not(.on) button.i[aria-expanded="true"] {
+  background: #FFFFFF; border-color: #FFFFFF; color: var(--night); }
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible, [role="button"]:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 1px; }
+header button:focus-visible { outline-color: #FFFFFF; }
+main { padding: 16px 24px 14px; }
+footer { color: var(--faint); font-size: 11px; margin-top: 12px; }
+
+/* Explanations: a small "i" opens one box at a time */
+button.i { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; padding: 0;
+  margin-left: 5px; border-radius: 50%; border: 1px solid var(--faint); background: var(--card); color: var(--muted);
+  font: 700 10px/1 var(--head); cursor: pointer; vertical-align: 1px; flex: none; }
+button.i:hover, button.i[aria-expanded="true"] { border-color: var(--accent); color: var(--card); background: var(--accent); }
+th button.i { border-color: var(--faint); }
+.tip { position: fixed; z-index: 50; max-width: 320px; background: var(--ink); color: #FFFFFF; padding: 9px 12px;
+  border-radius: 8px; font: 400 12px/1.45 var(--body); box-shadow: 0 8px 24px rgba(15, 27, 45, .22); }
+
+/* Cards, banners, headings */
+.banner { border: 1px solid #F6CFC9; border-left: 4px solid var(--bad); background: var(--bad-soft); padding: 9px 14px;
+  margin: 0 0 14px; border-radius: var(--radius-sm); box-shadow: var(--shadow); }
+.banner.info { border: 1px solid var(--line); border-left: 4px solid var(--accent); background: var(--card); }
+.cards { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 18px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px;
+  min-width: 190px; box-shadow: var(--shadow); }
+.card .num { font: 700 26px/1.15 var(--head); letter-spacing: -.02em; display: block; }
+.card .lab { color: var(--muted); font-size: 12px; }
+h2 { font-size: 20px; letter-spacing: -.015em; margin: 4px 0 10px; display: flex; align-items: center; }
+h3 { font-size: 14px; margin: 16px 0 8px; }
+.lead { color: var(--muted); margin: 0 0 12px; max-width: 90ch; }
+.muted { color: var(--muted); }
+
+/* Controls */
+.filters { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end; background: var(--card);
+  border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; margin: 0 0 10px; box-shadow: var(--shadow); }
+.filters label { display: flex; flex-direction: column; font-size: 11px; font-weight: 600; color: var(--muted); gap: 3px; }
+input, select { font: 400 13px var(--body); color: var(--ink); border: 1px solid #D0D5DD; border-radius: var(--radius-sm);
+  padding: 6px 9px; background: var(--card); transition: border-color .15s, box-shadow .15s; }
+input:hover, select:hover { border-color: var(--accent-mid); }
+input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); outline: 0; }
+input.w-sm { width: 100px; } input.w-md { width: 150px; }
+button { background: var(--accent); color: #FFFFFF; border: 0; border-radius: var(--radius-sm); padding: 8px 14px; font-size: 12px;
+  cursor: pointer; transition: background .15s, box-shadow .15s, color .15s; }
+button:not(.link, .tab, .i, .ghost, .switch button) { box-shadow: 0 1px 2px rgba(16, 24, 40, .12); }
+button:not(.link, .tab, .i, .ghost, .switch button):hover { background: var(--accent-strong); }
+button.ghost { background: var(--card); color: var(--accent); border: 1px solid var(--accent-mid); }
+button.ghost:hover { background: var(--accent-soft); }
+.count { color: var(--muted); margin: 6px 0; }
+.switch { display: inline-flex; gap: 2px; margin: 0 0 12px; padding: 3px; background: #E2E6EE; border-radius: 10px; }
+.switch button { background: transparent; color: var(--muted); border: 0; border-radius: var(--radius-sm); box-shadow: none; }
+.switch button:hover { background: rgba(255, 255, 255, .6); color: var(--ink); }
+.switch button[aria-pressed="true"] { background: var(--card); color: var(--accent); box-shadow: 0 1px 3px rgba(16, 24, 40, .14); }
+.notice { display: flex; gap: 10px; align-items: center; margin: 4px 0; }
+.notice .gross { font-weight: 700; }
+
+/* Tables */
+.wrap { overflow: auto; max-height: calc(100vh - 230px); background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: var(--shadow); }
+table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 12.5px; }
+th { position: sticky; top: 0; z-index: 2; background: #F8F9FC; color: var(--muted); text-align: left;
+  padding: 9px 12px; white-space: nowrap; font-size: 11px; letter-spacing: .02em; border-bottom: 1px solid var(--line);
+  box-shadow: 0 1px 0 var(--line); }
+td { padding: 7px 12px; border-bottom: 1px solid #F0F2F6; vertical-align: top; transition: background .12s; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover td { background: #F5F5FF; }
+td.num, th.num { text-align: right; white-space: nowrap; }
+td.key { font-size: 12px; word-break: break-all; min-width: 135px; }
+tfoot td { position: sticky; bottom: 0; background: #F8F9FC; font-weight: 700; border-top: 1px solid var(--line);
+  box-shadow: 0 -1px 0 var(--line); }
+.pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap;
+  color: var(--ink); background: var(--soft); box-shadow: inset 0 0 0 1px rgba(16, 24, 40, .06); }
+.pill.real_error, .pill.fail { background: var(--bad-soft); color: var(--bad); }
+.pill.timing { background: var(--accent-soft); color: var(--accent); }
+.pill.data_issue, .pill.auto_cleared, .pill.neutral { background: var(--soft); color: var(--muted); }
+.pill.pass { background: var(--good-soft); color: var(--good); }
+td input, td select { width: 100%; min-width: 80px; }
+td.note-c input { min-width: 110px; }
+.summary { max-height: none; margin: 0 0 14px; }
+td.typehead { background: var(--soft); padding: 6px 12px; } td.typehead button { font-size: 12.5px; }
+tr.flag td { color: var(--faint); }
+.summary table { width: auto; min-width: 60%; }
+.summary tbody tr { cursor: pointer; }
+.summary tbody tr.sub td { background: var(--soft); font-weight: 700; }
+.summary tbody tr.on td { background: var(--accent-soft); }
+.summary tbody tr.on td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+.rows th { white-space: normal; }
+.rows td.c-date { white-space: nowrap; }
+.rows td.c-action { min-width: 190px; } .rows td.c-type { white-space: normal; min-width: 110px; }
+.rows td.c-src { font-size: 12px; min-width: 130px; }
+.rows td.c-fields .kv { display: inline-block; margin-right: 12px; }
+.kv, .more { display: block; } .kv .k, .more { color: var(--muted); }
+button.link { background: transparent; color: var(--accent); padding: 0; font: 400 12px var(--body); text-align: left;
+  text-decoration: none; word-break: break-all; }
+button.link:hover { text-decoration: underline; }
+button.link.task { word-break: normal; overflow-wrap: normal; min-width: 150px; color: var(--ink); font-weight: 600; }
+tr.srcrow td { background: #F8F9FC; padding: 6px 12px 12px 30px; box-shadow: inset 3px 0 0 var(--accent-mid); }
+.srctable { width: auto; font-size: 12px; } .srctable td { border-bottom: 1px solid var(--line); background: transparent; }
+.srctable td.c-src { white-space: nowrap; color: var(--muted); }
+.srctable .kv { display: inline-block; margin-right: 12px; }
+td.link, td.link-on { cursor: pointer; } td.link:hover { background: var(--accent-soft); color: var(--accent); }
+.tie { margin: 4px 0; } .tie.bad { color: var(--bad); font-weight: 700; }
+
+/* Summary: two status lines, one card per pair of records, the explained split below */
+.strip { display: grid; grid-template-columns: 2.7fr 1fr; gap: 14px; margin: 0 0 14px; }
+.status { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 14px 8px 16px;
+  cursor: pointer; line-height: 1.35; font-size: 12px; box-shadow: var(--shadow); position: relative; overflow: hidden;
+  transition: box-shadow .15s, transform .15s, border-color .15s; }
+.status::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--ink); }
+.status:hover { border-color: var(--accent-mid); box-shadow: var(--shadow-up); transform: translateY(-1px); }
+.status b { display: block; font: 700 10.5px var(--head); color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
+.legs { display: grid; grid-template-columns: 1.16fr .98fr 1.36fr; gap: 12px; margin: 0 0 14px; align-items: start; }
+.leg { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 13px 9px;
+  box-shadow: var(--shadow); }
+.leg h3 { margin: 0 0 6px; font-size: 15px; letter-spacing: -.01em; display: flex; align-items: center; }
+.leg h3 .no { display: inline-flex; width: 22px; height: 22px; border-radius: 7px;
+  background: linear-gradient(135deg, var(--accent) 0%, #6D5BD0 100%); color: #FFFFFF; align-items: center;
+  justify-content: center; font-size: 11px; margin-right: 9px; box-shadow: 0 2px 6px rgba(67, 56, 202, .28); }
+.leg .sub { color: var(--faint); font: 700 10px var(--head); text-transform: uppercase; letter-spacing: .07em;
+  margin: 6px 0 1px; padding-top: 5px; border-top: 1px solid var(--soft); }
+.fig { display: grid; grid-template-columns: minmax(0, 1fr) 36px 88px; gap: 6px; padding: 0 4px; border-radius: 5px;
+  line-height: 1.25; align-items: center; min-height: 17px; }
+.cols { display: grid; grid-template-columns: 1.1fr 1fr; gap: 0 12px; } .cols .fig { grid-template-columns: minmax(0, 1fr) 0 84px; gap: 4px; }
+.fig .fl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; }
+.fig .fn, .fig .fu { text-align: right; } .fig .fn { color: var(--muted); }
+.fig .fu { font-weight: 600; }
+.fig.link { cursor: pointer; transition: background .12s; } .fig.link:hover, .fig.link:focus-visible { background: var(--accent-soft); }
+.fig.plain .fl span { color: var(--muted); }
+.fig.wrong .fu { color: var(--bad); }
+.leg .note { color: var(--muted); font-size: 11.5px; margin: 3px 4px 0; line-height: 1.3; }
+
+/* Waterfall: one row per step; the bar floats from where the walk stands to where it goes */
+.wf { margin: 0 0 6px; }
+.wf .wt { display: flex; align-items: center; font: 700 11px var(--head); color: var(--muted); margin: 0 0 3px; }
+.wrow { display: grid; grid-template-columns: minmax(0, 2.1fr) minmax(0, 1fr) 80px; gap: 0 8px; align-items: center;
+  padding: 0 4px; border-radius: 5px; min-height: 19px; }
+.wrow.link { cursor: pointer; transition: background .12s; } .wrow.link:hover, .wrow.on { background: var(--accent-soft); }
+.wrow .wl { display: flex; align-items: center; min-width: 0; line-height: 1.2; }
+.wrow .wl .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wrow .wl .c { color: var(--faint); font-size: 11px; margin-left: 5px; white-space: nowrap; }
+.wrow.total .wl .t { font-weight: 700; }
+.wrow svg { width: 100%; height: 14px; display: block; overflow: visible; }
+.wrow .wamt { text-align: right; white-space: nowrap; font-weight: 600; }
+.wrow.t-wrong .wamt { color: var(--bad); } .wrow.t-ties .wamt { color: var(--good); }
+.wrow .wnote { grid-column: 1 / -1; color: var(--muted); font-size: 11px; margin: -2px 0 2px; line-height: 1.25; }
+.wf .tie-line { font-size: 11.5px; margin: 3px 4px 0; font-weight: 600; }
+.wf .tie-line.ok { color: var(--good); } .wf .tie-line.bad { color: var(--bad); }
+.wbar.total { fill: var(--night-2); } .wbar.wrong { fill: var(--bad); } .wbar.fix { fill: var(--accent); }
+.wbar.waiting { fill: var(--card); stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 2; }
+.wbar.owed { fill: var(--faint); } .wbar.ties { fill: var(--good); }
+.wlink { stroke: var(--faint); stroke-width: 1; stroke-dasharray: 2 2; }
+.wbreak { stroke: var(--card); stroke-width: 3; }
+
+/* The payable bridge */
+.bridge { width: 100%; font-size: 12px; border-collapse: collapse; margin-top: 2px; table-layout: fixed; }
+.bridge th { position: static; white-space: normal; font: 700 10.5px var(--body); text-align: right; padding: 0 4px 2px;
+  background: none; color: var(--muted); vertical-align: bottom; border: 0; letter-spacing: 0; }
+.bridge th:first-child, .bridge td:first-child { width: 56%; text-align: left; white-space: normal; overflow-wrap: anywhere; }
+.bridge td { padding: 0 4px; line-height: 1.2; border-bottom: 1px solid var(--soft); }
+.bridge td.num { text-align: right; font-weight: 600; }
+.bridge tr:last-child td { border-bottom: 0; font-weight: 700; }
+.bridge td.link { cursor: pointer; } .bridge td.link.on { background: var(--accent-soft); color: var(--accent); }
+.btitle { font: 700 11px var(--head); color: var(--muted); margin: 8px 0 1px; display: flex; align-items: center; }
+.owed { margin-top: 12px; } .owed h3 { margin: 6px 0 4px; font-size: 13px; }
+
+/* Below the legs */
+.stack { display: grid; gap: 12px; align-content: start; }
+tr.pick { cursor: pointer; }
+.compact h3 { margin: 0 0 4px; font-size: 14px; }
+.compact .said { color: var(--muted); font-size: 11.5px; margin: 3px 2px 0; }
+.compact h3 .muted { font: 400 11.5px var(--body); }
+.compact table { font-size: 12px; line-height: 1.2; } .compact td, .compact th { padding: 3px 5px; }
+.compact th { position: static; white-space: normal; vertical-align: bottom; background: none; }
+.compact td:first-child { white-space: nowrap; }
+
+/* Pending actions and drafts */
+.drafts { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 12px; }
+.draft { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px;
+  box-shadow: var(--shadow); }
+.draft h3 { margin: 0 0 6px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.draft pre { white-space: pre-wrap; font: 400 12px/1.55 var(--body); background: var(--soft); border: 1px solid var(--line);
+  border-radius: var(--radius-sm); padding: 10px 12px; margin: 8px 0; }
+.draft .actions { display: flex; gap: 8px; }
+.lacks { margin: 0; padding-left: 18px; } .lacks li { margin: 2px 0; }
+.lacks button { margin-left: 8px; padding: 3px 8px; font-size: 12px; }
+.resolves { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 18px; background: var(--card);
+  border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 20px 16px 24px; margin: 0 0 14px;
+  box-shadow: var(--shadow); position: relative; overflow: hidden; }
+.resolves::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px;
+  background: linear-gradient(180deg, var(--bad) 0%, var(--accent) 100%); }
+.resolves .big { font: 700 30px/1.1 var(--head); letter-spacing: -.02em; }
+.resolves .part { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--bad); }
+.resolves .part.timing { color: var(--accent); }
+td.res .pill { margin-left: 6px; font-size: 10px; }
+td .legs-of { display: block; color: var(--muted); font-size: 11px; font-weight: 400; }
+td.res { font-weight: 600; }
+
+/* Phone width: the grids stack, the header wraps */
+@media screen and (max-width: 760px) {
+  header { padding: 10px 16px 0; }
+  header .top { flex-direction: column; gap: 2px; }
+  header .meta { white-space: normal; }
+  main { padding: 14px 16px 12px; }
+  .strip, .legs, .cols { grid-template-columns: minmax(0, 1fr); }
+  .leg { overflow-x: auto; }
+  .drafts { grid-template-columns: 1fr; }
+  .resolves .big { font-size: 24px; }
+}
+
+@media print {
+  body { background: #FFFFFF; font-size: 11px; }
+  header { border: 0; padding: 0 0 6px; background: none; box-shadow: none; }
+  header h1 { color: var(--ink); } header h1 .period, header .line, header .meta { color: var(--muted); }
+  .wrap, .filters, .banner, .resolves { box-shadow: none; } nav, button.i, .filters, button:not(.link), .switch { display: none !important; }
+  main { padding: 0; }
+  .wrap, .summary { max-height: none !important; overflow: visible; border: 0; }
+  th { position: static; } tfoot td { position: static; }
+  .leg, .status, .card, .draft { break-inside: avoid; box-shadow: none; }
+  .legs { grid-template-columns: 1fr 1fr 1.35fr; }
+  .tip { display: none; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div><h1>Project Bridge<span class="period" id="period"></span></h1>
+      <p class="line">Case study by Andrés Molina &mdash; not a Clara product. Nothing here is posted; every entry is a proposal.</p></div>
+    <p class="meta" id="meta"></p>
+  </div>
+  <nav id="tabs" role="tablist"></nav>
+</header>
+<main>
+  <div id="warn" class="banner" hidden></div>
+  <div id="missing" class="banner info" hidden></div>
+  <div id="panels"></div>
+  <footer>Amounts are shown exactly as computed, from decimal text. Fonts: DM Sans and Inter (SIL Open Font License),
+    embedded in this file.</footer>
+</main>
+<script type="application/json" id="bridge-data">__BRIDGE_DATA__</script>
+<script>
+(function () {
+  "use strict";
+  var data = JSON.parse(document.getElementById("bridge-data").textContent);
+  var T = data.tables, PAGE = data.page, totals = data.manifest.totals, OV = PAGE.overview;
+
+  // Plain-English labels: the only place type, class and leg codes are translated.
+  var CLASS_LABEL = { real_error: "Real error", timing: "Timing difference", data_issue: "Data issue",
+                      auto_cleared: "Rounding (cleared)" };
+  var CLASS_ORDER = ["real_error", "timing", "data_issue"];
+  var LEG_LABEL = { "1": "Leg 1: processor vs Mastercard", "2": "Leg 2: Mastercard settlement vs bank",
+                    "3": "Leg 3: bank and processor vs ledger" };
+  var TYPE_LABEL = {
+    month_cutoff: "Month cut-off", processor_entry_misdated: "Processor entry on wrong date",
+    funding_in_transit: "Funding in transit", settlement_not_debited: "Settlement not yet debited",
+    suspense_pending_payer: "Suspense, payer pending", processor_duplicate: "Duplicate in processor",
+    bank_duplicate_debit: "Duplicate bank debit", sign_flip: "Sign flipped", amount_diff: "Amount differs",
+    fx_rate_diff: "FX rate differs", processor_only: "Only in processor", mastercard_only: "Only in Mastercard",
+    processor_entry_missing: "Processor ledger entry missing", invoice_not_accrued: "Invoice not accrued",
+    settlement_amount_diff: "Settlement amount differs", usd_conversion_error: "USD conversion error",
+    ledger_amount_diff: "Ledger amount differs from bank", ledger_posted_late: "Posted after the period end, move it back",
+    bank_not_yet_posted: "In the ledger, bank not yet posted",
+    bank_line_unrecorded: "Bank line not in ledger", ledger_entry_unmatched: "Ledger entry without bank line",
+    reference_bad: "Bad network reference", auth_after_clearing: "Authorised after clearing",
+    auth_stale: "Stale authorisation", ambiguous_match: "Ambiguous match", input_missing: "Input missing",
+    rounding: "Rounding"
+  };
+  var COLUMN_LABEL = { leg: "Leg", type: "Type", cls: "Class", key: "Key", gross: "Gross USD", net: "Net USD",
+    age_wd: "Age (business days)", requires_explanation: "Needs explanation", escalates: "Escalates",
+    controller_action: "Controller action", who_fixes: "Who fixes", clara_owner: "Clara owner", action: "What to do",
+    src: "Source", date: "Date", entry_id: "Entry", account: "Account",
+    debit: "Debit", credit: "Credit", status: "Status", approval_level: "Approval", title: "Title",
+    before: "Before", after_confirmed: "After (confirmed)", after_all: "After (all)", line: "Line", amount: "Amount",
+    name: "Check", passed: "Result", count: "Count", detail: "Detail", balance: "Closing balance",
+    mc_debits: "Mastercard debits", days_of_coverage: "Days of coverage" };
+  var BASIS_LABEL = { program: "program country", merchant: "merchant country" };  // whose country a facet shows
+  var YES_NO = [["true", "Yes"], ["false", "No"]];
+  var AMOUNT_COLUMNS = { gross: 1, net: 1, debit: 1, credit: 1, before: 1, after_confirmed: 1, after_all: 1,
+                         amount: 1, balance: 1, mc_debits: 1, days_of_coverage: 1 };
+  var SCREENS = PAGE.screens.map(function (s) { return s.name; });
+  var NOTE_FILE = "bridge.notes.v1";
+  var STATUSES = ["Open", "In progress", "Explained", "Resolved", "Won't fix"];
+
+  function el(tag, attrs, kids) {
+    var e = document.createElement(tag);
+    Object.keys(attrs || {}).forEach(function (k) {
+      if (k === "text") { e.textContent = attrs[k]; } else if (k === "class") { e.className = attrs[k]; }
+      else { e.setAttribute(k, attrs[k]); }
+    });
+    (kids || []).forEach(function (c) { e.appendChild(c); });
+    return e;
+  }
+  function label(map, code) { return map[code] || code; }
+  function colLabel(c) { return COLUMN_LABEL[c] || c.replace(/_/g, " "); }
+  function cellText(c, v) {
+    if (v === "true") { return "Yes"; } if (v === "false") { return "No"; }
+    if (c === "type") { return label(TYPE_LABEL, v); }
+    if (c === "line") { return v.replace(/_/g, " "); }
+    return v;
+  }
+  function has(want, v) { return Array.isArray(want) ? want.indexOf(v) >= 0 : want === v; }
+  function on(node, fn) {   // a click, or Enter or Space on a focusable non-button
+    node.addEventListener("click", fn);
+    node.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fn(); } });
+    node.tabIndex = 0; node.setAttribute("role", "button");
+  }
+
+  // ---- Explanations: an "i" opens its text from the page data; one box at a time, closed by a click outside or Escape ----
+  var tip = el("div", { "class": "tip", role: "dialog", hidden: "" }), tipFor = null;
+  function closeTip() {
+    if (tipFor) { tipFor.setAttribute("aria-expanded", "false"); }
+    tip.hidden = true; tipFor = null;
+  }
+  function openTip(b, key) {
+    var r = b.getBoundingClientRect();
+    tip.textContent = PAGE.glossary[key]; tip.hidden = false; tipFor = b; b.setAttribute("aria-expanded", "true");
+    var w = tip.offsetWidth, h = tip.offsetHeight, top = r.bottom + 6;
+    if (top + h > window.innerHeight - 8) { top = Math.max(8, r.top - h - 6); }
+    tip.style.left = Math.max(8, Math.min(r.left - 12, window.innerWidth - w - 8)) + "px"; tip.style.top = top + "px";
+  }
+  function info(key) {
+    if (!key || !PAGE.glossary[key]) { return document.createTextNode(""); }
+    var b = el("button", { "class": "i", type: "button", "aria-label": "What this means", "aria-expanded": "false", text: "i" });
+    b.addEventListener("click", function (e) { e.stopPropagation(); if (tipFor === b) { closeTip(); } else { closeTip(); openTip(b, key); } });
+    b.addEventListener("keydown", function (e) { e.stopPropagation(); });
+    return b;
+  }
+  document.addEventListener("click", function (e) { if (tipFor && !tip.contains(e.target)) { closeTip(); } });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closeTip(); } });
+  window.addEventListener("resize", closeTip);
+  document.addEventListener("scroll", closeTip, true);
+  function th(c, cls) {   // a column header with its explanation
+    return el("th", { "class": cls || (AMOUNT_COLUMNS[c] || c === "count" ? "num" : "") }, [document.createTextNode(colLabel(c)),
+      info("column." + c)]);
+  }
+
+  // ---- Saved notes (assigned person, status, comment): localStorage inside try/catch, memory otherwise ----
+  var notes = {}, storageOk = true;
+  function loadNotes() {
+    try {
+      var raw = window.localStorage.getItem(NOTE_FILE);
+      notes = raw ? JSON.parse(raw) || {} : {};
+      window.localStorage.setItem(NOTE_FILE + ".probe", "1");
+      window.localStorage.removeItem(NOTE_FILE + ".probe");
+    } catch (e) { storageOk = false; }
+    warn();
+  }
+  function saveNotes() {
+    try { window.localStorage.setItem(NOTE_FILE, JSON.stringify(notes)); storageOk = true; }
+    catch (e) { storageOk = false; }
+    warn();
+  }
+  function warn() {
+    var w = document.getElementById("warn");
+    w.hidden = storageOk;
+    w.textContent = storageOk ? "" : "This browser is blocking saved notes for this file. Assigned person, status and comments " +
+      "stay on screen only until you leave the page. Use Export CSV to keep them.";
+  }
+  function noteOf(id) { return notes[id] || { person: "", status: "Open", comment: "" }; }
+  function setNote(id, field, value) {
+    var n = noteOf(id); n[field] = value; notes[id] = n; saveNotes();
+  }
+
+  // ---- Rows of a data table: the table's row, and its page row (stable id, every cited source row) ----
+  function items(tab) {
+    return T[tab].rows.map(function (r, i) { return { r: r, p: PAGE[tab].rows[i], id: PAGE[tab].rows[i].row_id }; });
+  }
+  var ex = items("exceptions").map(function (x, i) {
+    var f = data.facets[i] || {};
+    x.country = f.country || ""; x.basis = f.country_basis || ""; x.date = f.date || "";
+    return x;
+  });
+  var files = data.manifest.files;
+  var reliable = !T.checks.rows.some(function (r) {
+    return (r.name === data.names.cover_check || r.name === data.names.owned_check) && r.passed === "false";
+  });
+  // A filter value is one text or a list of texts (a figure on the Summary can stand for several types).
+  var filt = { type: "", cls: "", country: "", leg: "", controller_action: "", requires_explanation: "", escalates: "",
+               who_fixes: "", ids: "", from: "", to: "", min: "", max: "", q: "" };
+  var FILTER_LABEL = { type: "Type", cls: "Class", country: "Country", leg: "Leg", controller_action: "Controller action",
+    requires_explanation: "Needs explanation", escalates: "Escalates", who_fixes: "Who fixes", from: "Date from",
+    to: "Date to", min: "Gross at least", max: "Gross at most", q: "Search" };
+
+  function amountOk(x) {
+    var g = Math.abs(parseFloat(x.r.gross));
+    if (filt.min !== "" && !(g >= parseFloat(filt.min))) { return false; }
+    if (filt.max !== "" && !(g <= parseFloat(filt.max))) { return false; }
+    return true;
+  }
+  function exceptionKept(x) {
+    if (filt.cls && !has(filt.cls, x.r.cls)) { return false; }
+    if (filt.type && !has(filt.type, x.r.type)) { return false; }
+    if (filt.leg && !has(filt.leg, x.r.leg)) { return false; }
+    if (filt.country && !has(filt.country, x.country)) { return false; }
+    if (filt.controller_action && !has(filt.controller_action, x.r.controller_action)) { return false; }
+    if (filt.requires_explanation && !has(filt.requires_explanation, x.r.requires_explanation)) { return false; }
+    if (filt.escalates && !has(filt.escalates, x.r.escalates)) { return false; }
+    if (filt.who_fixes && !has(filt.who_fixes, x.r.who_fixes)) { return false; }
+    if (filt.ids && !has(filt.ids, x.id)) { return false; }
+    if (filt.from && !(x.date && x.date >= filt.from)) { return false; }
+    if (filt.to && !(x.date && x.date <= filt.to)) { return false; }
+    return amountOk(x);
+  }
+
+  // ---- Cells ----
+  // Display only: thousands separators on a decimal amount; the data, the CSVs and the downloads stay plain.
+  function fmt(v) {
+    return /^-?\d+\.\d+$/.test(v) ? v.replace(/^(-?\d+)/, function (i) { return i.replace(/\B(?=(\d{3})+(?!\d))/g, ","); }) : v;
+  }
+  function whole(v) { return String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+  function cell(c, v) {
+    var td = el("td", { "class": AMOUNT_COLUMNS[c] || c === "count" || c === "age_wd" ? "num" : (c === "key" ? "key" : "") });
+    if (c === "cls") { td.appendChild(el("span", { "class": "pill " + v, text: label(CLASS_LABEL, v) })); }
+    else if (c === "passed") { td.appendChild(el("span", { "class": "pill " + (v === "true" ? "pass" : "fail"),
+      text: v === "true" ? "Pass" : "Fail" })); }
+    else { td.textContent = AMOUNT_COLUMNS[c] ? fmt(v) : cellText(c, v); }
+    return td;
+  }
+  // Every cited input row of a table row, in the file's own words. A source row expands in place under its row.
+  function sourceTable(sources) {
+    var t = el("table", { "class": "srctable" }), body = t.createTBody();
+    sources.forEach(function (s) {
+      var tr = body.insertRow(), fields = el("td", { "class": "c-fields" });
+      s.fields.forEach(function (f) {
+        fields.appendChild(el("span", { "class": "kv" }, [el("span", { "class": "k", text: colLabel(f[0]) + ": " }),
+          document.createTextNode(fmt(f[1]))]));
+      });
+      tr.appendChild(el("td", { "class": "c-src", text: s.ref })); tr.appendChild(fields);
+      if (s.amount !== undefined) { tr.appendChild(el("td", { "class": "num", text: fmt(s.amount) })); }
+    });
+    return t;
+  }
+  function sourceButton(tr, id, sources, span, store) {
+    var first = sources.length ? sources[0].ref : "no source";
+    var b = el("button", { "class": "link", "aria-expanded": "false" });
+    function text(openNow) {
+      b.textContent = (openNow ? "▾ " : "▸ ") + first + (sources.length > 1 ? " +" + (sources.length - 1) + " more" : "");
+      b.setAttribute("aria-expanded", openNow ? "true" : "false");
+    }
+    function insert() {
+      var row = el("tr", { "class": "srcrow" }, [el("td", { colspan: String(span) }, [sourceTable(sources)])]);
+      tr.parentNode.insertBefore(row, tr.nextSibling);
+    }
+    b.addEventListener("click", function () {
+      var next = tr.nextSibling;
+      if (next && next.className === "srcrow") { next.parentNode.removeChild(next); delete store[id]; text(false); }
+      else { insert(); store[id] = 1; text(true); }
+    });
+    text(false);
+    return { button: b, restore: function () { if (store[id]) { insert(); text(true); } } };
+  }
+  // Assigned person: what the analyst typed (a blanked field stays blank), else the named owner of the difference.
+  function personOf(x) { return notes[x.id] ? notes[x.id].person : (x.r.clara_owner_name || ""); }
+  function ownerText(role, name) { return role + (name ? " — " + name : ""); }
+  function noteCells(tr, x) {
+    var n = noteOf(x.id);
+    var person = el("input", { type: "text", value: personOf(x), "aria-label": "Assigned person" });
+    person.addEventListener("input", function () { setNote(x.id, "person", person.value); });
+    var status = el("select", { "aria-label": "Status" }, STATUSES.map(function (s) {
+      var o = el("option", { value: s, text: s }); if (s === n.status) { o.selected = true; } return o; }));
+    status.addEventListener("change", function () { setNote(x.id, "status", status.value); });
+    var comment = el("input", { type: "text", value: n.comment, "aria-label": "Comment" });
+    comment.addEventListener("input", function () { setNote(x.id, "comment", comment.value); });
+    tr.appendChild(el("td", {}, [person])); tr.appendChild(el("td", {}, [status]));
+    tr.appendChild(el("td", { "class": "note-c" }, [comment]));
+  }
+  function searchText(x) {
+    var n = noteOf(x.id), fields = [];
+    x.p.sources.forEach(function (s) { s.fields.forEach(function (f) { fields.push(f[1]); }); });
+    return Object.keys(x.r).map(function (c) { return x.r[c]; }).concat(fields, [label(TYPE_LABEL, x.r.type || ""),
+      x.country || "", personOf(x), n.comment]).join(" ").toLowerCase();
+  }
+
+  // ---- CSV export ----
+  function csvCell(v) {
+    var s = String(v);
+    if (/^[=+@\t\r]/.test(s)) { s = "'" + s; }
+    return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }
+  // Rows as tab-separated text, so a paste into a spreadsheet keeps the columns.
+  function tsv(columns, rows) {
+    var clean = function (v) { return String(v).replace(/[\t\r\n]+/g, " "); };
+    return [columns.map(clean).join("\t")].concat(rows.map(function (r) { return r.map(clean).join("\t"); })).join("\n") + "\n";
+  }
+  function saveBlob(fileName, text, type) {
+    var a = el("a", { href: URL.createObjectURL(new Blob([text], { type: type })), download: fileName });
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  }
+  function download(fileName, columns, rows) {
+    var lines = [columns.map(csvCell).join(",")].concat(rows.map(function (r) { return r.map(csvCell).join(","); }));
+    saveBlob(fileName, "﻿" + lines.join("\n") + "\n", "text/csv;charset=utf-8");
+  }
+  function exportExceptions(rows) {
+    var cols = T.exceptions.columns.filter(function (c) { return c !== "src"; });
+    var head = cols.concat(["country", "date", "assigned_person", "status", "comment", "src"]);
+    download("exceptions_with_notes.csv", head, rows.map(function (x) {
+      var n = noteOf(x.id);
+      return cols.map(function (c) { return x.r[c]; }).concat([x.country, x.date, personOf(x), n.status, n.comment, x.r.src]);
+    }));
+  }
+
+  // ---- Money: the page block carries the sums where they mean something; the browser adds up only the rows a
+  // filter leaves (one leg at a time on exceptions) and the amounts of the source rows it shows. ----
+  function cents(v) { return Math.round(parseFloat(v) * 100); }
+  function plainCents(n) { return (n < 0 ? "-" : "") + Math.floor(Math.abs(n) / 100) + "." + ("0" + (Math.abs(n) % 100)).slice(-2); }
+  function addUp(rows, f) { return plainCents(rows.reduce(function (a, x) { return a + cents(x.r[f]); }, 0)); }
+  function countryOptions() {
+    var bases = {};
+    ex.forEach(function (x) { if (x.country) { (bases[x.country] = bases[x.country] || {})[x.basis] = 1; } });
+    return Object.keys(bases).sort().map(function (c) {
+      return [c, c + " (" + Object.keys(bases[c]).map(function (b) { return BASIS_LABEL[b]; }).join(", ") + ")"];
+    });
+  }
+  function distinct(list) { return list.filter(function (v, i) { return v && list.indexOf(v) === i; }); }
+
+  // ---- Moving between screens: a click on a figure filters its table in place and brings the table into view ----
+  var panels = {}, tabButtons = {}, recon, closeScreen, missingBanner = document.getElementById("missing");
+  function go(name) {
+    SCREENS.forEach(function (s) {
+      tabButtons[s].setAttribute("aria-selected", s === name ? "true" : "false");
+      tabButtons[s].parentNode.className = "tabwrap" + (s === name ? " on" : "");
+      panels[s].hidden = s !== name;
+    });
+    missingBanner.hidden = name === "Summary" || !data.manifest.inputs_not_read.length;   // the Summary's quality sentence says it
+  }
+  function follow(link, name, step) {   // step: the waterfall step a click came from, if any
+    if (link.screen === "Close" || link.length) { closeScreen.select(link, name); }
+    else if (link.grouped) { recon.group(); }
+    else { recon.apply(link.filter, step); }
+  }
+  function intoView(node, block) { node.scrollIntoView({ block: block || "start" }); }
+
+  // ---- Summary: one look at the three legs ----
+  function figureRow(f, wrong) {
+    var row = el("div", { "class": "fig " + (f.link ? "link" : "plain") + (wrong && f.count !== "0" ? " wrong" : "") }, [
+      el("span", { "class": "fl" }, [el("span", { text: f.label }), info(f.glossary)]),
+      el("span", { "class": "fn", text: f.count === undefined ? "" : whole(f.count) }),
+      el("span", { "class": "fu", text: f.usd === undefined ? "" : fmt(f.usd) })]);
+    if (f.link) { on(row, function () { follow(f.link, f.label); }); }
+    return row;
+  }
+  // 2105 against Mastercard's own files: one column per set of entries, one row per line; a figure opens the rows that
+  // sum to it. The two Mastercard lines list theirs in `host`, below the Summary, one list per line clicked.
+  function bridgeBlock(bridge, host) {
+    var box = el("div"), t = el("table", { "class": "bridge" }), head = t.createTHead().insertRow(), body = t.createTBody(), open = {};
+    head.appendChild(el("th", { text: "" }));
+    bridge.forEach(function (b) { head.appendChild(el("th", { text: b.label })); });
+    function drawOwed() {
+      host.innerHTML = "";
+      bridge.forEach(function (b) {
+        b.lines.forEach(function (l) {
+          if (!open[b.basis + "|" + l.line]) { return; }
+          var list = el("table", { "class": "rows" }), lb = list.createTBody();
+          l.sources.forEach(function (s) {
+            var tr = lb.insertRow(); tr.appendChild(el("td", { "class": "c-src", text: s.ref }));
+            tr.appendChild(el("td", { "class": "num", text: fmt(s.amount) }));
+          });
+          host.appendChild(el("div", { "class": "owed" }, [el("h3", { text: l.label + " \u2014 " + b.label + ": " + fmt(l.usd) + " USD" }),
+            el("div", { "class": "wrap", style: "max-height:none" }, [list])]));
+        });
+      });
+    }
+    function draw() {
+      body.innerHTML = "";
+      bridge[0].lines.forEach(function (first, i) {
+        var tr = body.insertRow();
+        tr.appendChild(el("td", {}, [document.createTextNode(first.label), info(first.glossary)]));
+        bridge.forEach(function (b) {
+          var l = b.lines[i], link = l.link, key = b.basis + "|" + l.line;
+          var td = el("td", { "class": "num" + (link || l.sources ? " link" : "") + (open[key] ? " on" : ""), text: fmt(l.usd) });
+          if (link) { on(td, function () { follow(link, l.label); }); }
+          else if (l.sources) { on(td, function () { open[key] = !open[key]; draw(); drawOwed(); if (open[key]) { intoView(host, "nearest"); } }); }
+          tr.appendChild(td);
+        });
+      });
+    }
+    draw();
+    box.appendChild(el("div", { "class": "btitle", text: "Mastercard payable 2105 against Mastercard's own files" }));
+    box.appendChild(t);
+    host = host || box.appendChild(el("div"));
+    bridge.forEach(function (b) { if (b.note) { box.appendChild(el("div", { "class": "note", text: b.note })); } });
+    return box;
+  }
+  // A waterfall, as computed in the page data: start, one row per step, end. The script only places the bars: each
+  // floats from where the walk stands to where the step takes it; when every total sits far from zero on one side, the
+  // scale starts near the steps and the total bars show a break. A row opens the rows that sum to it.
+  function svg(tag, attrs) {
+    var e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); });
+    return e;
+  }
+  function signed(step) { return (step.side === "credit" ? -1 : 1) * cents(step.usd); }
+  function shown(step, total) {   // display only: a step carries its sign, a total its side
+    var v = fmt(step.usd.replace(/^-/, ""));
+    if (total) { return (/^-/.test(step.usd) ? "\u2212" : "") + v + (step.side === "debit" ? " Dr" : step.side === "credit" && cents(step.usd) ? " Cr" : ""); }
+    return cents(step.usd) === 0 ? "0.00" : (signed(step) < 0 ? "\u2212" : "+") + v;
+  }
+  function waterfall(w, openList) {
+    var steps = [w.start].concat(w.bars, [w.end]), at = 0, spans = [], points = [];
+    steps.forEach(function (st, i) {
+      var v = signed(st), last = i === steps.length - 1;
+      if (i === 0 || last) { spans.push([0, v]); points.push(v); at = v; }
+      else { spans.push([at, at + v]); at += v; points.push(at); }
+    });
+    var lo = Math.min.apply(null, points), hi = Math.max.apply(null, points), broken = lo > 0 && (hi - lo) < hi / 2;
+    if (broken) { var pad = Math.max((hi - lo) * 0.25, 1); lo = lo - pad; hi = hi + pad * 0.4; }
+    else { lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
+    function x(v) { return hi === lo ? 0 : 1000 * (v - lo) / (hi - lo); }
+    var box = el("div", { "class": "wf" }, [el("div", { "class": "wt" }, [document.createTextNode(w.title), info(w.glossary)])]);
+    steps.forEach(function (st, i) {
+      var total = i === 0 || i === steps.length - 1, a = Math.max(x(spans[i][0]), 0), b = x(spans[i][1]);
+      var g = svg("svg", { viewBox: "0 0 1000 16", preserveAspectRatio: "none", role: "img",
+                         "aria-label": st.label + ": " + fmt(st.usd) + " USD" });
+      var left = Math.min(a, b), width = Math.max(Math.abs(b - a), 3);
+      g.appendChild(svg("rect", { "class": "wbar " + st.tone, x: left, y: 2, width: width, height: 12, rx: 1.5,
+                                  "vector-effect": "non-scaling-stroke" }));
+      if (total && broken) { g.appendChild(svg("line", { "class": "wbreak", x1: 18, y1: 0, x2: 10, y2: 16, "vector-effect": "non-scaling-stroke" })); }
+      if (i < steps.length - 1) {   // where the next step starts
+        var to = x(points[i]);
+        g.appendChild(svg("line", { "class": "wlink", x1: to, y1: 14, x2: to, y2: 22, "vector-effect": "non-scaling-stroke" }));
+      }
+      var name = st.type ? label(TYPE_LABEL, st.type) : st.label;
+      var lab = el("span", { "class": "wl" }, [el("span", { "class": "t", text: name, title: name })]);
+      if (st.count !== undefined) { lab.appendChild(el("span", { "class": "c", text: whole(st.count) + (st.count === "1" ? " row" : " rows") })); }
+      lab.appendChild(info(st.glossary));
+      var row = el("div", { "class": "wrow t-" + st.tone + (total ? " total" : "") }, [lab, g,
+        el("span", { "class": "wamt", text: shown(st, total) })]);
+      if (st.note) { row.appendChild(el("span", { "class": "wnote", text: st.note })); }
+      if (st.link) { row.className += " link"; on(row, function () { follow(st.link, w.title + ": " + name, st); }); }
+      else if (st.sources) {
+        row.className += " link";
+        on(row, function () { row.classList.toggle("on", openList(w.leg + "|" + i, name + ": " + fmt(st.usd) + " USD", st.sources)); });
+      }
+      box.appendChild(row);
+    });
+    box.appendChild(el("div", { "class": "tie-line " + (w.ties ? "ok" : "bad"), text: (w.ties ? "\u2713 " : "") + w.said }));
+    return box;
+  }
+  function summaryPanel(p) {
+    var wrong = /\.(exceptions|escalates|waiting_outside)$/;
+    function strip(title, text, target) {
+      var b = el("div", { "class": "status" }, [el("b", { text: title }), el("span", { text: text })]);
+      on(b, function () { go(target); });
+      return b;
+    }
+    p.appendChild(el("div", { "class": "strip" }, [strip("Close status", OV.close_status, "Pending actions"),
+      strip("Data quality", OV.data_quality, "Data quality")]));
+    if (!reliable) {
+      p.appendChild(el("div", { "class": "banner", role: "alert", text: "The figures are not reliable: an input file does " +
+        "not cover the period, is missing or unreadable (see Data quality), or a close-checklist task has no owner. " +
+        "Results are still shown." }));
+    }
+    // Rows a waterfall step opens below the Summary, one list per step clicked; a second click closes it.
+    var legs = el("div", { "class": "legs" }), owedHost = el("div"), stepHost = el("div"), lists = {};
+    function openList(key, title, sources) {
+      if (lists[key]) { delete lists[key]; } else { lists[key] = { title: title, sources: sources }; }
+      stepHost.innerHTML = "";
+      Object.keys(lists).forEach(function (k) {
+        var t = el("table", { "class": "rows" }), b = t.createTBody(), sum = 0;
+        lists[k].sources.forEach(function (s) {
+          var tr = b.insertRow(); sum += cents(s.amount);
+          tr.appendChild(el("td", { "class": "c-src", text: s.ref })); tr.appendChild(el("td", { "class": "num", text: fmt(s.amount) }));
+        });
+        var f = t.createTFoot().insertRow();
+        f.appendChild(el("td", { text: "Rows: " + lists[k].sources.length })); f.appendChild(el("td", { "class": "num", text: fmt(plainCents(sum)) }));
+        stepHost.appendChild(el("div", { "class": "owed" }, [el("h3", { text: lists[k].title }),
+          el("div", { "class": "wrap", style: "max-height:none" }, [t])]));
+      });
+      if (lists[key]) { intoView(stepHost, "nearest"); }
+      return !!lists[key];
+    }
+    // How much is explained: per leg, the difference split by what explains it. Each amount opens its rows.
+    var SPLIT = [["total", "Difference (net)", ""], ["timing", "Timing", "timing"], ["real_error", "Real error", "real_error"],
+                 ["data_issue", "Data issue", "data_issue"]];
+    var rest = fmt(totals.unexplained_total_usd) + " USD" + (totals.unexplained_escalates === "true" ? " (above the limit)" : "");
+    SPLIT.push(["unexplained", "Unexplained", null]);
+    var SENTENCE = "Every difference has a type, who fixes it, a Clara owner and an action. Not explained in total: " + rest + ".";
+    var t = el("table"), head = t.createTHead().insertRow(), body = t.createTBody();
+    head.appendChild(el("th", { text: "Leg" }));
+    SPLIT.forEach(function (c) { head.appendChild(el("th", { "class": "num", text: c[1] })); });
+    OV.explained.forEach(function (e) {
+      var tr = body.insertRow();
+      tr.appendChild(el("td", { text: "Leg " + e.leg }));
+      SPLIT.forEach(function (c) {
+        var td = el("td", { "class": "num", text: fmt(e[c[0]]) });
+        if (c[2] !== null && cents(e[c[0]]) !== 0) {
+          td.className += " link"; td.title = "Show these exceptions";
+          on(td, function () { recon.apply(c[2] ? { leg: e.leg, cls: c[2] } : { leg: e.leg }); });
+        }
+        tr.appendChild(td);
+      });
+    });
+    var explainedBox = el("div", { "class": "leg compact" }, [el("h3", { text: "How much is explained, USD" }), t,
+      el("p", { "class": "said", text: SENTENCE })]);
+    var walks = {};
+    OV.waterfalls.forEach(function (w) { walks[w.leg] = w; });
+    var TITLE = { "1": "Processor vs Mastercard", "2": "Mastercard settlement vs bank", "3": "Ledger vs bank and Mastercard" };
+    ["1", "2", "3"].forEach(function (leg) {
+      var figs = OV.figures.filter(function (f) { return f.leg === leg; });
+      var box = el("div", { "class": "leg" }, [el("h3", {}, [el("span", { "class": "no", text: leg }),
+        document.createTextNode(TITLE[leg])])]);
+      if (walks[leg]) { box.appendChild(waterfall(walks[leg], openList)); }
+      box.appendChild(el("div", { "class": "sub", text: leg === "3" ? "Bridge account 1110 and payable 2105" : "Rows matched" }));
+      var held = leg === "3" ? box.appendChild(el("div", { "class": "cols" })) : box;
+      figs.filter(function (f) { return !wrong.test(f.id); }).forEach(function (f) { held.appendChild(figureRow(f)); });
+      if (leg === "1") {
+        box.appendChild(el("div", { "class": "note", text: "Net difference of the exceptions: " + fmt(totals.leg1_difference_usd) +
+          " USD (gross difference of the files: " + fmt(OV.leg1_gross_difference) + ")" }));
+      }
+      if (leg === "3") { box.appendChild(bridgeBlock(OV.payable_bridge, owedHost)); }
+      box.appendChild(el("div", { "class": "sub", text: "What is wrong" }));
+      figs.filter(function (f) { return wrong.test(f.id); }).forEach(function (f) { box.appendChild(figureRow(f, true)); });
+      legs.appendChild(leg === "2" ? el("div", { "class": "stack" }, [box, explainedBox]) : box);
+    });
+    p.appendChild(legs);
+
+    p.appendChild(stepHost); p.appendChild(owedHost);
+  }
+
+  // ---- Data quality: the checks and what a failed one means for the result, then the input files ----
+  function dataQualityPanel(p) {
+    var open = {}, rows = items("checks").sort(function (a, b) {
+      return (a.r.passed === "true") - (b.r.passed === "true"); });
+    p.appendChild(el("h2", {}, [document.createTextNode("Data quality"), info("screen.Data quality")]));
+    p.appendChild(el("div", { "class": "banner " + (reliable ? "info" : ""), text: OV.data_quality }));
+    if (!reliable) {
+      p.appendChild(el("div", { "class": "banner", role: "alert", text: "The figures are not reliable: an input file does " +
+        "not cover the period, is missing or unreadable (see Input files below), or a close-checklist task has no owner " +
+        "(see the checks). Results are still shown." }));
+    }
+    p.appendChild(el("p", { "class": "lead", text: "Every check reports a result, including the clean ones, with what it " +
+      "counts. A failed check says what it means for the result; click it to list the rows it flags below." }));
+    // One line per check: its count in its own unit, and the rows it flags, which the table below lists.
+    var flagged = PAGE.flagged.rows, pickCheck = "";
+    var t = el("table", { "class": "rows" }), head = t.createTHead().insertRow(), body = t.createTBody();
+    ["passed", "name"].forEach(function (c) { head.appendChild(th(c)); });
+    head.appendChild(th("count", "num")); head.appendChild(th("detail"));
+    head.appendChild(el("th", { text: "What it means for the result" })); head.appendChild(el("th", { text: "Source" }));
+    rows.forEach(function (x) {
+      var tr = body.insertRow(), failed = x.r.passed === "false";
+      tr.setAttribute("data-row-id", x.id);
+      tr.appendChild(cell("passed", x.r.passed));
+      tr.appendChild(el("td", { text: x.r.name.replace(/_/g, " ") }));
+      tr.appendChild(el("td", { "class": "num", text: x.p.units.map(function (u) { return whole(u.count) + " " + u.unit; }).join(" \u00b7 ")
+        || (failed ? "fails" : "passes") }));
+      tr.appendChild(el("td", { text: x.r.detail })); tr.appendChild(el("td", { text: failed ? x.p.meaning : "" }));
+      // The rows the check counts; the close-checklist row it cites for its task is said apart, not counted among them.
+      var src = sourceButton(tr, x.id, x.p.sources.filter(function (s) { return x.p.task_refs.indexOf(s.ref) < 0; }), 6, open);
+      tr.appendChild(el("td", { "class": "c-src" }, [src.button].concat(x.p.task_refs.map(function (r) {
+        return el("span", { "class": "more", text: "task: " + r }); }))));
+      src.restore();
+      if (flagged.some(function (f) { return f.check === x.r.name; })) {
+        tr.className = "pick"; on(tr, function () { pickCheck = x.r.name; checkSel.value = pickCheck; drawFlagged(); intoView(flagBox); });
+      }
+    });
+    var foot = t.createTFoot().insertRow();
+    foot.appendChild(el("td", { text: "Checks: " + rows.length + ", failed: " + rows.filter(function (x) {
+      return x.r.passed === "false"; }).length }));
+    for (var i = 0; i < 5; i += 1) { foot.appendChild(el("td")); }
+    p.appendChild(el("div", { "class": "wrap", style: "max-height:none" }, [t]));
+
+    // Every row a failed check flags: filter by check; copy or download the rows shown.
+    var names = distinct(flagged.map(function (f) { return f.check; }));
+    var checkSel = el("select", { id: "f-check" }, [el("option", { value: "", text: "All" })].concat(names.map(function (n) {
+      return el("option", { value: n, text: n.replace(/_/g, " ") }); })));
+    checkSel.addEventListener("change", function () { pickCheck = checkSel.value; drawFlagged(); });
+    var cp = el("button", { "class": "ghost", text: "Copy rows shown" }), dl = el("button", { text: "Download CSV (rows shown)" });
+    var FLAG_COLS = ["check", "reason", "ref", "fields", "amount"], flagHost = el("div", { "class": "wrap" }), shownFlags = [];
+    function flagRow(f) {
+      return [f.check, f.reason, f.ref, f.fields.map(function (k) { return k[0] + "=" + k[1]; }).join("; "), f.amount || ""];
+    }
+    cp.addEventListener("click", function () { copyText(tsv(FLAG_COLS, shownFlags.map(flagRow)), cp, "Copy rows shown"); });
+    dl.addEventListener("click", function () { download("flagged_rows.csv", FLAG_COLS, shownFlags.map(flagRow)); });
+    function drawFlagged() {
+      shownFlags = flagged.filter(function (f) { return !pickCheck || f.check === pickCheck; });
+      var ft = el("table", { "class": "rows" }), fh = ft.createTHead().insertRow(), fb = ft.createTBody(), sum = 0;
+      ["Check", "Why it is flagged", "Source", "Source fields"].forEach(function (h) { fh.appendChild(el("th", { text: h })); });
+      fh.appendChild(el("th", { "class": "num", text: "Amount USD" }));
+      shownFlags.forEach(function (f) {
+        var tr = fb.insertRow(), fields = el("td", { "class": "c-fields" });
+        f.fields.forEach(function (k) { fields.appendChild(el("span", { "class": "kv" }, [el("span", { "class": "k", text: colLabel(k[0]) + ": " }),
+          document.createTextNode(fmt(k[1]))])); });
+        tr.appendChild(el("td", { "class": "c-type", text: f.check.replace(/_/g, " ") }));
+        tr.appendChild(el("td", { text: f.reason.charAt(0).toUpperCase() + f.reason.slice(1) }));
+        tr.appendChild(el("td", { "class": "c-src", text: f.ref })); tr.appendChild(fields);
+        tr.appendChild(el("td", { "class": "num", text: f.amount === undefined ? "" : fmt(f.amount) }));
+        sum += f.amount === undefined ? 0 : cents(f.amount);
+      });
+      var ff = ft.createTFoot().insertRow();
+      ff.appendChild(el("td", { text: "Rows shown: " + shownFlags.length + " of " + flagged.length }));
+      ff.appendChild(el("td")); ff.appendChild(el("td")); ff.appendChild(el("td"));
+      ff.appendChild(el("td", { "class": "num", text: pickCheck ? fmt(plainCents(sum)) : "" }));   // one check's rows add up; all of them do not
+      flagHost.innerHTML = ""; flagHost.appendChild(ft);
+    }
+    var flagBox = el("div", {}, [el("h3", { text: "Rows the failed checks flag" }),
+      el("div", { "class": "filters" }, [el("label", { text: "Check" }, [checkSel]), cp, dl]), flagHost]);
+    p.appendChild(flagBox);
+    drawFlagged();
+    p.appendChild(el("h3", { text: "Input files" }));
+    var t3 = el("table"), h3 = t3.createTHead().insertRow(), b3 = t3.createTBody();
+    ["File", "Read", "Rows", "Date column", "First", "Last"].forEach(function (h, i) {
+      h3.appendChild(el("th", { "class": i === 2 ? "num" : "", text: h })); });
+    Object.keys(files).forEach(function (name) {
+      var f = files[name], cols = Object.keys(f.dates);
+      (cols.length ? cols : [""]).forEach(function (c, i) {
+        var tr = b3.insertRow();
+        tr.appendChild(el("td", { text: i ? "" : name }));
+        tr.appendChild(el("td", { text: i ? "" : (f.status === data.names.read ? "Yes" : "No, missing or unreadable") }));
+        tr.appendChild(el("td", { "class": "num", text: i ? "" : String(f.rows) }));
+        tr.appendChild(el("td", { text: c })); tr.appendChild(el("td", { text: c ? f.dates[c].first : "" }));
+        tr.appendChild(el("td", { text: c ? f.dates[c].last : "" }));
+      });
+    });
+    p.appendChild(el("div", { "class": "wrap", style: "max-height:none" }, [t3]));
+  }
+
+  // ---- Reconciliation: Detailed (every exception) and Grouped (by day or account), switched in place ----
+  var EX_COLS = ["type", "date", "net", "age_wd", "escalates", "who_fixes", "clara_owner", "action", "src"];
+
+  function reconPanel(p) {
+    var block = PAGE.exceptions, shown = [], controls = {}, open = {}, view = "Detailed", step = null;
+    // The data flags carry no money: hidden until asked for, or until a filter names them.
+    var NOTE_HEADS = ["Assigned person", "Status", "Comment"];
+    // The leg-1 data flags carry no money: the bare Detailed view hides them; any filter, search or a figure opened
+    // from another screen shows them, so a figure opens as many rows as it says.
+    var hid = block.hidden_by_default, showFlags = false, collapsed = {}, rank = {};
+    block.summary.forEach(function (s, i) { rank[s.leg + "|" + s.category] = i; });
+    var flagBtn = el("button", { "class": "ghost" });
+    flagBtn.addEventListener("click", function () { showFlags = !showFlags; draw(); });
+    var sumHost = el("div", { "class": "wrap summary" }), count = el("div", { "class": "count" });
+    var active = el("div", { "class": "notice" }), host = el("div", { "class": "wrap" });
+    var detailed = el("div"), grouped = el("div"), switcher = el("div", { "class": "switch" }), pressed = {};
+    function sel(key, labelText, options) {
+      var s = el("select", { id: "f-" + key }, [el("option", { value: "", text: "All" })].concat(
+        options.map(function (o) { return el("option", { value: o[0], text: o[1] }); })));
+      s.addEventListener("change", function () { filt[key] = s.value; step = null; draw(); });   // a new filter is no longer the step
+      controls[key] = s;
+      return el("label", { text: labelText }, [s]);
+    }
+    function inp(key, labelText, type, cls) {
+      var i = el("input", { id: "f-" + key, type: type, "class": cls });
+      i.addEventListener("input", function () { filt[key] = i.value.trim(); step = null; draw(); });
+      controls[key] = i;
+      return el("label", { text: labelText }, [i]);
+    }
+    function syncControls() {
+      Object.keys(controls).forEach(function (k) { controls[k].value = Array.isArray(filt[k]) ? "" : filt[k]; });
+    }
+    function reset(changes) {
+      Object.keys(filt).forEach(function (k) { filt[k] = ""; });
+      step = null;
+      Object.keys(changes || {}).forEach(function (k) { filt[k] = changes[k]; });
+      syncControls();
+    }
+    var clear = el("button", { "class": "ghost", text: "Clear filters" });
+    var dl = el("button", { text: "Download CSV (rows shown, with notes)" }), cp = el("button", { "class": "ghost", text: "Copy rows shown" });
+    var bar = el("div", { "class": "filters" }, [
+      sel("type", "Type", distinct(block.summary.map(function (s) { return s.category; })).map(function (c) {
+        return [c, label(TYPE_LABEL, c)]; })),
+      sel("leg", "Leg", ["1", "2", "3"].map(function (l) { return [l, label(LEG_LABEL, l)]; })),
+      sel("cls", "Class", CLASS_ORDER.map(function (c) { return [c, label(CLASS_LABEL, c)]; })),
+      sel("country", "Country", countryOptions()),
+      sel("who_fixes", "Who fixes", distinct(ex.map(function (x) { return x.r.who_fixes; })).sort().map(function (w) {
+        return [w, w]; })),
+      sel("escalates", "Escalates", YES_NO),
+      sel("controller_action", "Controller action", YES_NO), sel("requires_explanation", "Needs explanation", YES_NO),
+      inp("from", "Date from", "date", "w-md"), inp("to", "Date to", "date", "w-md"),
+      inp("min", "Gross at least (USD)", "number", "w-sm"), inp("max", "Gross at most (USD)", "number", "w-sm"),
+      inp("q", "Search", "text", "w-md"), clear, cp, dl]);
+    clear.addEventListener("click", function () { reset(); showFlags = false; draw(); });
+    dl.addEventListener("click", function () { exportExceptions(shown); });
+    cp.addEventListener("click", function () {   // what the table shows: its columns, in order, by their labels, with the notes
+      var cols = columns(), heads = cols.map(colLabel).concat(NOTE_HEADS);
+      copyText(tsv(heads, shown.map(function (x) {
+        var n = noteOf(x.id);
+        return cols.map(function (c) {
+          return c === "date" ? x.date : c === "src" ? x.r.src : c === "clara_owner" ? ownerText(x.r.clara_owner, x.r.clara_owner_name) : AMOUNT_COLUMNS[c] ? fmt(x.r[c]) : c === "cls" ? label(CLASS_LABEL, x.r[c]) : cellText(c, x.r[c]);
+        }).concat([personOf(x), n.status, n.comment]); })), cp, "Copy rows shown");
+    });
+
+    function describe() {
+      var parts = [];
+      Object.keys(filt).forEach(function (k) {
+        var v = filt[k];
+        if (v === "" || (Array.isArray(v) && !v.length)) { return; }
+        var text;
+        if (k === "ids") { text = v.length + " listed rows"; }
+        else if (Array.isArray(v)) { text = v.length > 3 ? v.length + " values" : v.map(function (c) { return label(TYPE_LABEL, c); }).join(", "); }
+        else if (k === "type") { text = label(TYPE_LABEL, v); }
+        else if (k === "cls") { text = label(CLASS_LABEL, v); }
+        else { text = cellText(k, v); }
+        parts.push((k === "ids" ? "Rows" : FILTER_LABEL[k]) + ": " + text);
+      });
+      return parts;
+    }
+    function bare() {   // no filter and no search
+      return Object.keys(filt).every(function (k) { return filt[k] === "" || (Array.isArray(filt[k]) && !filt[k].length); });
+    }
+    function kept(x) {
+      if (!showFlags && bare() && x.r.cls === hid.cls && hid.types.indexOf(x.r.type) >= 0) { return false; }
+      return exceptionKept(x) && (!filt.q || searchText(x).indexOf(filt.q.toLowerCase()) >= 0);
+    }
+    function summaryRow(body, cells, isOn, pick, cls) {
+      var tr = body.insertRow();
+      tr.className = (cls || "") + (isOn ? " on" : "");
+      tr.setAttribute("aria-pressed", isOn ? "true" : "false");
+      cells.forEach(function (td) { tr.appendChild(td); });
+      on(tr, pick);
+    }
+    function amountCells(s) {
+      return [el("td", { "class": "num", text: whole(s.count) })].concat(block.sums.map(function (f) {
+        return el("td", { "class": "num", text: f in s ? fmt(s[f]) : "" }); }));
+    }
+    function blanks() { return block.carry.map(function () { return el("td"); }); }
+    function pick(changes) { reset(changes); draw(); intoView(bar); }
+    function drawSummary() {
+      var t = el("table"), head = t.createTHead().insertRow(), body = t.createTBody();
+      ["type"].concat(block.carry).forEach(function (c) { head.appendChild(th(c, "")); });
+      ["count"].concat(block.sums).forEach(function (c) { head.appendChild(th(c, "num")); });
+      block.subtotals.forEach(function (g) {
+        block.summary.filter(function (s) { return s.leg === g.leg; }).forEach(function (s) {
+          var isOn = filt.type === s.category && filt.leg === g.leg;
+          summaryRow(body, [el("td", { text: label(TYPE_LABEL, s.category) })].concat(block.carry.map(function (c) {
+            return cell(c, s[c]); }), amountCells(s)), isOn, function () {
+              pick(isOn ? {} : { type: s.category, leg: g.leg }); });
+        });
+        var isLeg = filt.leg === g.leg && !filt.type && !filt.cls;
+        summaryRow(body, [el("td", { text: label(LEG_LABEL, g.leg) + ", subtotal" })].concat(blanks(), amountCells(g)),
+          isLeg, function () { pick(isLeg ? {} : { leg: g.leg }); }, "sub");
+      });
+      sumHost.innerHTML = ""; sumHost.appendChild(t);
+    }
+    function footSum(f) {
+      var groups = {};
+      shown.forEach(function (x) { (groups[x.r.leg] = groups[x.r.leg] || []).push(x); });
+      var keys = Object.keys(groups).sort();
+      if (keys.length < 2) { return [fmt(addUp(shown, f))]; }
+      return keys.map(function (k) { return "Leg " + k + ": " + fmt(addUp(groups[k], f)); });
+    }
+    // A waterfall step opens its rows with the column it sums (link.show) beside the default ones, summed in the footer.
+    function columns() {
+      var extra = step && step.link.show ? step.link.show : [];
+      return EX_COLS.slice(0, EX_COLS.indexOf("net")).concat(extra, EX_COLS.slice(EX_COLS.indexOf("net")));
+    }
+    function summedCols() { return block.sums.concat(step && step.link.show ? step.link.show : []); }
+    function drawTable() {
+      var t = el("table", { "class": "rows" }), head = t.createTHead().insertRow(), body = t.createTBody(), cols = columns();
+      var noteHeads = NOTE_HEADS, span = cols.length + noteHeads.length;
+      cols.forEach(function (c) { head.appendChild(th(c)); });
+      noteHeads.forEach(function (h) { head.appendChild(el("th", { text: h })); });
+      var last = null;
+      shown.forEach(function (x) {
+        var kind = x.r.leg + "|" + x.r.type;
+        if (kind !== last) {   // a header row per type, with its count and net; a click folds the type away
+          last = kind;
+          var mine = shown.filter(function (y) { return y.r.leg + "|" + y.r.type === kind; });
+          var hb = el("button", { "class": "link task", "aria-expanded": collapsed[kind] ? "false" : "true", text: (collapsed[kind] ? "\u25b8 " : "\u25be ") +
+            label(TYPE_LABEL, x.r.type) + " \u00b7 leg " + x.r.leg + " \u00b7 " + whole(String(mine.length)) + (mine.length === 1 ? " row" : " rows") +
+            " \u00b7 net " + fmt(addUp(mine, "net")) + " USD" });
+          hb.addEventListener("click", (function (k) { return function () { collapsed[k] = !collapsed[k]; drawTable(); }; }(kind)));
+          body.insertRow().appendChild(el("td", { "class": "typehead", colspan: String(span) }, [hb]));
+        }
+        if (collapsed[kind]) { return; }
+        var tr = body.insertRow(), src = sourceButton(tr, x.id, x.p.sources, span, open);
+        tr.setAttribute("data-row-id", x.id);
+        cols.forEach(function (c) {
+          if (c === "src") { tr.appendChild(el("td", { "class": "c-src" }, [src.button])); }
+          else if (c === "date") { tr.appendChild(el("td", { "class": "c-date", text: x.date })); }
+          else if (c === "clara_owner") { tr.appendChild(el("td", { "class": "c-owner", text: ownerText(x.r.clara_owner, x.r.clara_owner_name) })); }
+          else { var td = cell(c, x.r[c]); td.className += " c-" + c; tr.appendChild(td); }
+        });
+        noteCells(tr, x);
+        src.restore();
+      });
+      var foot = t.createTFoot().insertRow();
+      cols.concat(noteHeads).forEach(function (c, i) {
+        var summed = summedCols().indexOf(c) >= 0, td = el("td", { "class": summed ? "num" : "" });
+        if (summed) { footSum(c).forEach(function (line) { td.appendChild(el("span", { "class": "kv", text: line })); }); }
+        else if (i === 0) { td.textContent = "Sum of rows shown: " + shown.length; }
+        foot.appendChild(td);
+      });
+      count.textContent = "Showing " + shown.length + " of " + ex.length + " rows";
+      var hiddenNow = ex.length - ex.filter(kept).length;   // the control names what the current view hides
+      flagBtn.textContent = showFlags ? "Hide the " + whole(hid.count) + " data flags" :
+        "Show the " + whole(String(hiddenNow)) + " data flags \u2014 no money; also in Data quality";
+      flagBtn.hidden = !bare() || (!showFlags && !hiddenNow);
+      host.innerHTML = ""; host.appendChild(t);
+    }
+    function draw() {
+      shown = ex.filter(kept).sort(function (a, b) {   // by type, in the summary's order, then by absolute net
+        return rank[a.r.leg + "|" + a.r.type] - rank[b.r.leg + "|" + b.r.type] ||
+          Math.abs(parseFloat(b.r.net)) - Math.abs(parseFloat(a.r.net));
+      });
+      drawSummary(); drawTable();
+      var parts = describe();
+      active.innerHTML = "";
+      if (parts.length) { active.appendChild(el("span", { text: "Filtered by " + parts.join(" · ") })); }
+      if (step && step.said) { active.appendChild(el("span", { "class": "gross", text: step.said })); }
+    }
+
+    // Grouped: one table per leg. A row with exceptions switches to Detailed, filtered to its exception rows.
+    function groupTable(title, columns, rows, pickRow, totalCols, counted) {   // counted: the footer's own count line
+      var t = el("table"), head = t.createTHead().insertRow(), body = t.createTBody(), sums = {};
+      columns.forEach(function (c) { head.appendChild(el("th", { "class": c[2] ? "num" : "", text: c[1] })); });
+      rows.forEach(function (r) {
+        var tr = body.insertRow();
+        if (r.flag) { tr.className = "flag"; }
+        columns.forEach(function (c) { tr.appendChild(el("td", { "class": c[2] ? "num" : "", text: c[2] ? fmt(r[c[0]] || "") : (r[c[0]] || "") })); });
+        if (r.ids.length) { tr.style.cursor = "pointer"; on(tr, function () { pickRow(r); }); }
+        if (r.items_note) { var nc = body.insertRow().insertCell(); nc.colSpan = columns.length; nc.className = "muted"; nc.textContent = r.items_note; }
+        if (r.bridge) {
+          var cell = body.insertRow().insertCell(); cell.colSpan = columns.length; cell.appendChild(bridgeBlock(r.bridge));
+        }
+        totalCols.forEach(function (k) { sums[k] = (sums[k] || 0) + cents(r[k]); });
+      });
+      var foot = t.createTFoot().insertRow();
+      columns.forEach(function (c, i) {
+        foot.appendChild(el("td", { "class": c[2] ? "num" : "", text: totalCols.indexOf(c[0]) >= 0 ? fmt(plainCents(sums[c[0]]))
+          : (i === 0 ? counted || "Sum of rows shown: " + rows.length : "") }));
+      });
+      return [el("h3", { text: title }), el("div", { "class": "wrap", style: "max-height:none" }, [t])];
+    }
+    function drawGrouped() {
+      var g = PAGE.grouped, kids = [];
+      function rowsOf(r) { show("Detailed"); pick({ ids: r.ids }); }
+      var leg1 = g["1"].map(function (r) {   // each type with its gross per side and its exceptions' net
+        return Object.assign({ kind: r.type === "matched_equal" ? "Matched, no difference" : label(TYPE_LABEL, r.type),
+          net: totals.leg1_by_type[r.type] !== undefined ? fmt(totals.leg1_by_type[r.type]) : "" }, r);
+      });
+      kids = kids.concat(groupTable(label(LEG_LABEL, "1") + ", by type",
+        [["kind", "Type"], ["count", "Pairs"], ["processor_usd", "Processor USD", 1], ["mastercard_usd", "Mastercard USD", 1],
+         ["difference", "Difference", 1], ["exceptions", "Exceptions", 1], ["net", "Net of the exceptions", 1]], leg1, rowsOf,
+        ["processor_usd", "mastercard_usd", "difference"], whole(String(leg1.reduce(function (a, r) {
+          return a + (r.flag ? 0 : parseInt(r.count || r.exceptions, 10)); }, 0))) + " pairs and single rows"));
+      if (leg1.some(function (r) { return r.flag; })) {
+        kids.push(el("p", { "class": "muted", text: "Data flags carry no money: their rows' amounts are already in the groups above, so they show 0.00." }));
+      }
+      kids = kids.concat(groupTable(label(LEG_LABEL, "2") + ", by settlement day",
+        [["date", "Date"], ["mastercard_net", "Mastercard net USD", 1], ["bank_debit", "Bank debit USD", 1],
+         ["difference", "Difference", 1]], g["2"], rowsOf, ["mastercard_net", "bank_debit", "difference"]));
+      kids = kids.concat(groupTable(label(LEG_LABEL, "3") + ", by account",
+        [["account", "Account"], ["name", "Name"], ["ledger", "Ledger USD", 1], ["record_label", "Compared with"],
+         ["record", "That figure USD", 1], ["difference", "Difference", 1], ["reconciling_items", "Reconciling items", 1],
+         ["unreconciled", "Unreconciled", 1]],
+        g["3"], rowsOf, []));
+      kids.push(el("p", { "class": "muted", text: "Click a row to see its exceptions in the detailed view. Leg 3 " +
+        "exceptions are not tagged with an account, so an account row shows all of leg 3." }));
+      grouped.innerHTML = "";
+      kids.forEach(function (k) { grouped.appendChild(k); });
+    }
+    function show(which) {
+      view = which;
+      detailed.hidden = which !== "Detailed"; grouped.hidden = which !== "Grouped";
+      Object.keys(pressed).forEach(function (k) { pressed[k].setAttribute("aria-pressed", k === which ? "true" : "false"); });
+    }
+    ["Detailed", "Grouped"].forEach(function (v) {
+      pressed[v] = el("button", { text: v });
+      pressed[v].addEventListener("click", function () { show(v); });
+      switcher.appendChild(pressed[v]);
+    });
+    p.appendChild(el("h2", {}, [document.createTextNode("Reconciliation"), info("screen.Reconciliation")]));
+    p.appendChild(el("p", { "class": "lead", text: "Every difference to review. Detailed lists each exception with who fixes " +
+      "it and what to do; Grouped adds them up by day or account. Click a type or a leg subtotal to filter the table; " +
+      "open a source to see the input rows behind a line. Assigned person, status and comment are saved in this browser." }));
+    p.appendChild(switcher);
+    [sumHost, bar, active, el("div", { "class": "notice" }, [count, flagBtn]), host].forEach(function (e) { detailed.appendChild(e); });
+    p.appendChild(detailed); p.appendChild(grouped);
+    drawGrouped(); show("Detailed"); draw();
+    return {
+      apply: function (changes, from) {
+        go("Reconciliation"); show("Detailed"); pick(changes); step = from || null; showFlags = true; draw();
+      },
+      group: function () { go("Reconciliation"); show("Grouped"); intoView(grouped); },
+      view: function () { return view; }
+    };
+  }
+
+  // ---- Pending actions: the status sentence, one row per close task, and the drafts to send ----
+  function copyText(text, button, again) {
+    function done(ok) {
+      button.textContent = ok ? "Copied" : "Copy failed";
+      setTimeout(function () { button.textContent = again || "Copy"; }, 1500);
+    }
+    function fallback() {
+      var ta = el("textarea", { "aria-hidden": "true", style: "position:fixed;opacity:0" });
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      document.body.removeChild(ta); done(ok);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { done(true); }, fallback);
+    } else { fallback(); }
+  }
+  function pendingPanel(p) {
+    var pend = PAGE.pending, taskText = {}, open = {};
+    T.close_tracker.rows.forEach(function (r) { taskText[r.task_id] = r.task; });
+    p.appendChild(el("h2", {}, [document.createTextNode("Pending actions"), info("screen.Pending actions")]));
+    p.appendChild(el("div", { "class": "banner info", text: pend.sentence }));
+    // The headline: what closing the tasks resolves, split into what clears on its own and what must be corrected.
+    // A task with entries and no differences of its own shows what its entries move on 2105, outside the total.
+    var split = pend.resolves_split, entryTasks = pend.tasks.filter(function (k) { return !k.lacks.exceptions.length && cents(k.resolves.entries_2105) !== 0; });
+    p.appendChild(el("div", { "class": "resolves" }, [el("span", { "class": "big", text: "Resolves USD " + fmt(pend.resolves_usd) }),
+      el("span", {}, [el("span", { "class": "part", text: fmt(split.errors) }), document.createTextNode(" needs action by Clara \u00b7 "),
+        el("span", { "class": "part timing", text: fmt(split.timing) }), document.createTextNode(" " + split.timing_label)]),
+      info("pending.resolves")]));
+    if (entryTasks.length) {
+      p.appendChild(el("p", { "class": "lead", text: "The total counts each difference once. " + entryTasks.map(function (k) { return k.task_id; })
+        .join(" and ") + " show what their proposed entries move on 2105, outside the total." }));
+    }
+    p.appendChild(el("p", { "class": "lead", text: "One row per close-checklist task, open ones first, with what the tool " +
+      "found that the task still lacks. The status is the checklist\'s; a task without a finding has no tool evidence and depends on its owner." }));
+    var t = el("table", { "class": "rows" }), head = t.createTHead().insertRow(), body = t.createTBody();
+    ["Task", "Status", "Owner", "Tool finding", "Drafts"].forEach(function (h) { head.appendChild(el("th", { text: h })); });
+    head.insertBefore(el("th", { "class": "num" }, [document.createTextNode("Resolves USD"), info("pending.resolves")]), head.cells[3]);
+    function resolvesCell(r) {   // what closing the task resolves, with the legs it comes from
+      var cr = !Object.keys(r.legs).length && cents(r.usd) < 0;   // an entry task: a credit on 2105, shown unsigned
+      var td = el("td", { "class": "num res", text: cr ? fmt(r.usd.replace(/^-/, "")) + " Cr" : fmt(r.usd) });
+      if (r.tag) { td.appendChild(el("span", { "class": "pill timing", text: CLASS_LABEL[r.tag] || r.tag })); }
+      var legs = Object.keys(r.legs).filter(function (l) { return cents(r.legs[l]) !== 0; });
+      if (legs.length) { td.appendChild(el("span", { "class": "legs-of", text: legs.map(function (l) {
+        return "Leg " + l + (legs.length > 1 ? " " + fmt(r.legs[l]) : ""); }).join(" · ") })); }
+      if (!legs.length && cents(r.entries_2105) !== 0) { td.appendChild(el("span", { "class": "legs-of", text: "on 2105, outside the total" })); }
+      return td;
+    }
+    pend.tasks.forEach(function (k) {
+      var lacks = k.lacks;
+      var tr = body.insertRow(), more = el("button", { "class": "link task", "aria-expanded": "false" });
+      function text(isOpen) {
+        more.textContent = (isOpen ? "▾ " : "▸ ") + k.task_id + " " + (taskText[k.task_id] || "");
+        more.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      }
+      text(false);
+      more.addEventListener("click", function () {
+        var next = tr.nextSibling;
+        if (next && next.className === "srcrow") { next.parentNode.removeChild(next); delete open[k.task_id]; text(false); return; }
+        var list = el("ul", { "class": "lacks" });
+        function item(textLine, btnText, fn) {
+          var li = el("li", { text: textLine });
+          if (fn) { var b = el("button", { "class": "ghost", text: btnText }); b.addEventListener("click", fn); li.appendChild(b); }
+          list.appendChild(li);
+        }
+        if (lacks.exceptions.length) { item(lacks.exceptions.length + " exceptions", "Show them in Reconciliation",
+          function () { recon.apply({ ids: lacks.exceptions }); }); }
+        if (lacks.entries.length) { item(lacks.entries.length + " proposed entries (" + lacks.entries.join(", ") + ")",
+          "Show them in Close", function () { closeScreen.select(k.link, k.task_id + ": proposed entries"); }); }
+        if (lacks.checks.length) { item(lacks.checks.length + " failed checks (" + lacks.checks.map(function (c) {
+          return c.replace(/_/g, " "); }).join(", ") + ")", "Show them in Data quality", function () { go("Data quality"); }); }
+        if (!list.childNodes.length) { item("Nothing found by the tool. " + k.text); }
+        tr.parentNode.insertBefore(el("tr", { "class": "srcrow" }, [el("td", { colspan: "6" }, [list])]), tr.nextSibling);
+        open[k.task_id] = 1; text(true);
+      });
+      tr.appendChild(el("td", {}, [more]));
+      tr.appendChild(el("td", {}, [el("span", { "class": "pill " + (k.status === "Done" ? "pass" : "neutral"), text: k.status })]));
+      tr.appendChild(el("td", {}, [document.createTextNode(k.owner + (k.owner_name ? " — " + k.owner_name : "")), info(k.owner_glossary)]));
+      tr.appendChild(resolvesCell(k.resolves));
+      tr.appendChild(el("td", { text: (k.blocked ? "Blocked \u2014 " : "") + k.text }));
+      var dcell = el("td");
+      k.drafts.forEach(function (id) {
+        var b = el("button", { "class": "link", text: id });
+        b.addEventListener("click", function () { intoView(document.getElementById("draft-" + id)); });
+        dcell.appendChild(b); dcell.appendChild(document.createTextNode(" "));
+      });
+      tr.appendChild(dcell);
+    });
+    p.appendChild(el("div", { "class": "wrap" }, [t]));
+    p.appendChild(el("h3", { text: "Drafts to send" }));
+    p.appendChild(el("p", { "class": "lead", text: "Nothing is sent from here. Copy a draft or download it as a text file." }));
+    var grid = el("div", { "class": "drafts" });
+    pend.drafts.forEach(function (d) {
+      var copy = el("button", { text: "Copy" }), save = el("button", { "class": "ghost", text: "Download .txt" });
+      copy.addEventListener("click", function () { copyText(d.text, copy); });
+      save.addEventListener("click", function () { saveBlob(d.id + "-" + d.to.toLowerCase() + ".txt", d.text, "text/plain;charset=utf-8"); });
+      grid.appendChild(el("div", { "class": "draft", id: "draft-" + d.id }, [
+        el("h3", {}, [document.createTextNode(d.id + " · To " + d.to + " "), el("span", { "class": "pill neutral", text: pend.notice })]),
+        el("pre", { text: d.text }), el("div", { "class": "actions" }, [copy, save])]));
+    });
+    p.appendChild(grid);
+  }
+
+  // ---- Close: entries, balances, cash and Treasury; the selected figure's source rows below, with sum and CSV ----
+  function closePanel(p) {
+    var KINDS = [["Entries", "proposed_entries"], ["Balances", "balances"], ["Cash", "cash_recon"], ["Treasury", "treasury"]];
+    var LEADS = { proposed_entries: "Proposals only; nothing is posted. The approval level follows the entry total. The same " +
+      "lines are in proposed_journal_lines.csv, in the ledger's columns, ready to load into the ERP and marked not approved.",
+      balances: "Account balances before and after the proposed entries. Each column adds up to zero.",
+      cash_recon: "Ledger cash to bank balance, with the reconciling items. The unreconciled line is the tie: ledger minus items minus bank." };
+    var tab = "proposed_entries", choice = null, pressed = {};
+    var switcher = el("div", { "class": "switch" }), mainHost = el("div"), srcHost = el("div");
+    function select(link, name) {
+      var parts = link.length ? link : [link];
+      go("Close"); tab = parts[0].table; choice = { parts: parts, name: name };
+      draw(); intoView(srcHost);
+    }
+    function matches(part, i) {
+      return Object.keys(part.filter).every(function (k) { return has(part.filter[k], T[part.table].rows[i][k]); });
+    }
+    // What a link sums: a column, or [added, subtracted] (debit minus credit).
+    function figureOf(part, r) {
+      if (part.sum && part.sum.length && typeof part.sum !== "string") { return cents(r[part.sum[0]]) - cents(r[part.sum[1]]); }
+      return part.sum && r[part.sum] !== undefined ? cents(r[part.sum]) : null;
+    }
+    function drawSource() {
+      srcHost.innerHTML = "";
+      srcHost.appendChild(el("h3", { text: choice ? "Source rows: " + choice.name : "Source rows" }));
+      if (!choice) {
+        srcHost.appendChild(el("p", { "class": "lead", text: "Click a line above, or a figure on the Summary, to see the input rows behind it." }));
+        return;
+      }
+      var rows = [], any = false, lines = [], together = 0, counted = 0, many = choice.parts.length > 1, seen = {}, repeats = [], lineNo = {};
+      function nameOf(part) {   // what a part's rows are and that they add up, for a click of several parts
+        if (part.table === "balances") { return "Ledger rows add up to "; }
+        if (part.table === "proposed_entries" && part.filter.account) { return "Proposed-entry lines on " + part.filter.account + " add up to "; }
+        return colLabel(part.table) + " add up to ";
+      }
+      choice.parts.forEach(function (part) {
+        var total = 0, figure = 0, hasFigure = false, hasAmounts = false;
+        T[part.table].rows.forEach(function (r, i) {
+          if (!matches(part, i)) { return; }
+          var add = figureOf(part, r);
+          if (add !== null) { figure += add; hasFigure = true; }
+          var key = PAGE[part.table].rows[i].row_id.split("|")[0];
+          if (!lineNo[part.table]) {   // a line's place among its entry's lines, in the table's own order
+            var count = {}; lineNo[part.table] = PAGE[part.table].rows.map(function (q) {
+              var k = q.row_id.split("|")[0]; count[k] = (count[k] || 0) + 1; return count[k]; });
+          }
+          var here = key + ", line " + lineNo[part.table][i] + (r.account ? " (" + r.account + ")" : ""), again = {}, n = 0;
+          PAGE[part.table].rows[i].sources.forEach(function (s) {
+            var mark = key + "|" + s.ref;
+            if (seen[mark]) { again[seen[mark]] = 1; n += 1; return; }   // a row already listed for this entry is said once, per line
+            seen[mark] = key + " line " + lineNo[part.table][i];
+            rows.push([key, s]);
+            if (s.amount !== undefined) { hasAmounts = true; total += cents(s.amount); }
+          });
+          if (n) { repeats.push(here + ": the same " + whole(n) + " rows as " + Object.keys(again).map(function (a) {
+            return a.replace(/^.*? line /, "line "); }).join(", ")); }
+        });
+        any = any || hasAmounts;
+        if (hasFigure) { together += figure; counted += 1; }
+        var shown = fmt(plainCents(figure)) + " USD";
+        if (hasFigure && hasAmounts && total !== figure) {
+          lines.push(el("p", { "class": "tie bad", text: (many ? nameOf(part) : "The amounts add up to ") +
+            fmt(plainCents(total)) + " USD; the figure is " + shown + "." }));
+        } else if (hasFigure) {
+          lines.push(el("p", { "class": "tie", text: many ? nameOf(part) + shown + "." :
+            (hasAmounts ? "The amounts add up to the figure, " + shown + "." :
+              "The lines in " + colLabel(part.table) + " add up to " + shown + ".") }));
+        }
+      });
+      if (counted > 1) {
+        lines.push(el("p", { "class": "tie", text: "Together: " + fmt(plainCents(together)) + " USD debit" + (together < 0 ?
+          ", that is " + fmt(plainCents(-together)) + " USD credit \u2014 the figure." : ".") }));
+      }
+      var t = el("table", { "class": "rows" }), head = t.createTHead().insertRow(), body = t.createTBody();
+      ["Row", "Source", "Source fields"].concat(any ? ["Amount"] : []).forEach(function (h, i) {
+        head.appendChild(el("th", { "class": h === "Amount" ? "num" : "", text: h })); });
+      rows.forEach(function (r) {
+        var tr = body.insertRow(), fields = el("td", { "class": "c-fields" });
+        r[1].fields.forEach(function (f) {
+          fields.appendChild(el("span", { "class": "kv" }, [el("span", { "class": "k", text: colLabel(f[0]) + ": " }),
+            document.createTextNode(fmt(f[1]))]));
+        });
+        tr.appendChild(el("td", { text: r[0] })); tr.appendChild(el("td", { "class": "c-src", text: r[1].ref }));
+        tr.appendChild(fields);
+        if (any) { tr.appendChild(el("td", { "class": "num", text: r[1].amount === undefined ? "" : fmt(r[1].amount) })); }
+      });
+      var foot = t.createTFoot().insertRow(), total = 0;
+      rows.forEach(function (r) { total += r[1].amount === undefined ? 0 : cents(r[1].amount); });
+      foot.appendChild(el("td", { text: "Source rows: " + rows.length }));
+      foot.appendChild(el("td")); foot.appendChild(el("td", { text: any && !many ? "Sum of amounts" : "" }));
+      if (any) { foot.appendChild(el("td", { "class": "num", text: many ? "" : fmt(plainCents(total)) })); }
+      var csv = el("button", { text: "Download CSV (source rows)" });
+      csv.addEventListener("click", function () {
+        download("source_rows.csv", ["row", "source", "fields", "amount"], rows.map(function (r) {
+          return [r[0], r[1].ref, r[1].fields.map(function (f) { return f[0] + "=" + f[1]; }).join("; "),
+            r[1].amount === undefined ? "" : r[1].amount]; }));
+      });
+      srcHost.appendChild(el("div", { "class": "filters" }, [csv]));
+      lines.forEach(function (l) { srcHost.appendChild(l); });
+      repeats.forEach(function (x) { srcHost.appendChild(el("p", { "class": "lead", text: x })); });
+      srcHost.appendChild(el("div", { "class": "wrap" }, [t]));
+    }
+    function pickRow(name, filter, sum) { choice = { parts: [{ table: tab, filter: filter, sum: sum }], name: name }; drawSource(); intoView(srcHost); markRows(); }
+    var marked = null;
+    function markRows() {
+      Array.prototype.forEach.call(mainHost.querySelectorAll("tr[data-pick]"), function (tr) {
+        var isOn = choice && choice.parts.length === 1 && choice.parts[0].table === tab &&
+          tr.getAttribute("data-pick") === JSON.stringify(choice.parts[0].filter);
+        tr.className = isOn ? "on" : ""; tr.setAttribute("aria-pressed", isOn ? "true" : "false");
+      });
+    }
+    function drawMain() {
+      mainHost.innerHTML = "";
+      var block = PAGE[tab];
+      if (tab === "treasury") {
+        mainHost.appendChild(el("p", { "class": "lead", text: PAGE.treasury.lead }));
+        mainHost.appendChild(el("div", { "class": "cards" }, PAGE.treasury.summary.map(function (s) { return card(fmt(s.value), s.label); })));
+        var cols = ["date", "balance", "mc_debits", "days_of_coverage"];
+        var t = el("table", { "class": "rows" }), head = t.createTHead().insertRow(), body = t.createTBody();
+        cols.forEach(function (c) { head.appendChild(th(c)); });
+        T.treasury.rows.forEach(function (r) {
+          var tr = body.insertRow(); tr.setAttribute("data-pick", JSON.stringify({ date: r.date }));
+          cols.forEach(function (c) { tr.appendChild(cell(c, r[c])); });
+          on(tr, function () { pickRow("Treasury, " + r.date, { date: r.date }, ""); });
+        });
+        mainHost.appendChild(el("div", { "class": "wrap summary", style: "max-height:340px" }, [t]));
+      } else {
+        var cat = block.category, t2 = el("table"), h = t2.createTHead().insertRow(), b = t2.createTBody();
+        mainHost.appendChild(el("p", { "class": "lead", text: LEADS[tab] }));
+        [cat].concat(block.carry).forEach(function (c) { h.appendChild(th(c, "")); });
+        ["count"].concat(block.sums).forEach(function (c) { h.appendChild(th(c, "num")); });
+        block.summary.forEach(function (s) {
+          var tr = b.insertRow(), f = {}; f[cat] = s.category; tr.setAttribute("data-pick", JSON.stringify(f));
+          tr.appendChild(el("td", { text: s.label }));
+          block.carry.forEach(function (c) { tr.appendChild(cell(c, s[c])); });
+          tr.appendChild(el("td", { "class": "num", text: whole(s.count) }));
+          block.sums.forEach(function (c) { tr.appendChild(el("td", { "class": "num", text: c in s ? fmt(s[c]) : "" })); });
+          on(tr, function () { pickRow(s.label, f, block.sums[0] || ""); });
+        });
+        var foot = t2.createTFoot().insertRow(), tot = block.total;
+        foot.appendChild(el("td", { text: tot.label }));
+        block.carry.forEach(function () { foot.appendChild(el("td")); });
+        foot.appendChild(el("td", { "class": "num", text: whole(tot.count) }));
+        block.sums.forEach(function (c) { foot.appendChild(el("td", { "class": "num", text: c in tot ? fmt(tot[c]) : "" })); });
+        mainHost.appendChild(el("div", { "class": "wrap summary", style: "max-height:340px" }, [t2]));
+      }
+      var dl = el("button", { "class": "ghost", text: "Download CSV (this table)" });
+      dl.addEventListener("click", function () {
+        var c = T[tab].columns;
+        download(tab + ".csv", c, T[tab].rows.map(function (r) { return c.map(function (k) { return r[k]; }); }));
+      });
+      mainHost.appendChild(dl);
+      markRows();
+    }
+    function draw() {
+      Object.keys(pressed).forEach(function (k) { pressed[k].setAttribute("aria-pressed", pressed[k].getAttribute("data-tab") === tab ? "true" : "false"); });
+      drawMain(); drawSource();
+    }
+    KINDS.forEach(function (k) {
+      var b = el("button", { text: k[0], "data-tab": k[1] });
+      b.addEventListener("click", function () { tab = k[1]; choice = null; draw(); });
+      pressed[k[0]] = b; switcher.appendChild(b);
+    });
+    [el("h2", {}, [document.createTextNode("Close"), info("screen.Close")]), switcher, mainHost, srcHost].forEach(function (e) { p.appendChild(e); });
+    draw();
+    return { select: select };
+  }
+  function card(num, lab) { return el("div", { "class": "card" }, [el("span", { "class": "num", text: num }),
+    el("span", { "class": "lab", text: lab })]); }
+
+  // ---- Start ----
+  var tabs = document.getElementById("tabs"), host = document.getElementById("panels");
+  document.getElementById("meta").textContent = "Run " + data.manifest.generated_at + " · code " +
+    data.manifest.code_version.slice(0, 12);
+  missingBanner.textContent = "Input not supplied, not estimated: " + data.manifest.inputs_not_read.join(", ") + ".";
+  loadNotes();
+  document.getElementById("period").textContent = PAGE.period;
+  document.body.appendChild(tip);
+  SCREENS.forEach(function (name) {
+    var b = el("button", { "class": "tab", role: "tab", text: name });
+    b.addEventListener("click", function () { go(name); window.scrollTo(0, 0); });
+    tabs.appendChild(el("span", { "class": "tabwrap" }, [b, info(PAGE.screens[SCREENS.indexOf(name)].glossary)])); tabButtons[name] = b;
+    var section = el("section", { role: "tabpanel" });
+    host.appendChild(section); panels[name] = section;
+  });
+  recon = reconPanel(panels.Reconciliation);
+  closeScreen = closePanel(panels.Close);
+  summaryPanel(panels.Summary); dataQualityPanel(panels["Data quality"]); pendingPanel(panels["Pending actions"]);
+  go("Summary");
+}());
+</script>
+</body>
+</html>
