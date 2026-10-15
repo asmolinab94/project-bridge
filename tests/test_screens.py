@@ -1416,7 +1416,8 @@ class LastPageMinors(_Screens):
 # plant Mastercard owes 44,884.41 (24-Sep) + 44,643.99 (30-Sep) + 928.31, so the first column's difference is
 # 54,700.22 - 90,456.71 = -35,756.49, of which 9,127.92 is E10 and -44,884.41 is not explained.
 
-ENTRIES_CD9981D_SHA256 = "315ec8d5b4625c84f4a760da3165591c4eef7931fe6c3d6017fe9ccd0adc2a60"
+# Re-pinned 2026-10-15: E10's evidence text reworded (cd9981d's file was 315ec8d5...); no amount or source changed.
+ENTRIES_CD9981D_SHA256 = "9a99cd70367ed8a1b6dae1f38eadc6e2d436b71252d5b358e150e7f0c40fb614"
 SAME_EVIDENCE = " rows as "   # amended by Freeze fixes: "E01, line 2 (5100): the same 151 rows as line 1" replaces the per-row marker
 TIMING = "timing"   # the class of a reconciling item to confirm
 

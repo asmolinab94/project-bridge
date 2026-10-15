@@ -91,7 +91,8 @@ SINGLE_ROW_TYPES = frozenset(["processor_duplicate", "processor_only", "masterca
 # Entries that stay conditional, by the difference type they correct, and the evidence they wait for.
 CONDITIONAL_EVIDENCE = {
     "suspense_pending_payer": "Payer confirmation (copy of the transfer message) for the unidentified inward receipt",
-    "processor_only": "Processor confirmation that these transactions are valid and not yet settled by Mastercard",
+    "processor_only": "Processor confirmation that these transactions were not presented to Mastercard in "
+                      "September and were listed as cleared in error",
 }
 # Program invoice line items that vary with volume; every other line item is a fixed programme cost.
 COST = SimpleNamespace(fixed="fixed", variable="variable")
@@ -243,8 +244,8 @@ ACTION_OF = {
     "sign_flip": "Processor corrects the sign and resends the file" + _POSTED_BY_FINANCE_OPS,
     "amount_diff": "Processor corrects the local amount and resends the file" + _POSTED_BY_FINANCE_OPS,
     "fx_rate_diff": "Processor re-rates at Mastercard's rate and resends the file" + _POSTED_BY_FINANCE_OPS,
-    "processor_only": "Processor confirms the transactions are valid and waits for Mastercard to settle them; Finance "
-                      "Ops posts the proposed conditional entry once the processor confirms",
+    "processor_only": "Processor confirms the transactions were not presented to Mastercard in September and "
+                      "corrects its file; Finance Ops posts the proposed conditional entry once the processor confirms",
     "mastercard_only": "Processor explains why Mastercard cleared transactions it never sent; Finance Ops posts the "
                        "proposed correction",
     "processor_entry_missing": "Post the missing processor entry for the clearing day",
