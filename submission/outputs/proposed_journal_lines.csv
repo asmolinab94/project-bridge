@@ -1,0 +1,42 @@
+je_id,posting_date,source,account,account_name,debit_usd,credit_usd,description,reference
+PROPOSED-E01,2026-09-30,PROPOSED_NOT_APPROVED,1210,Card Receivable - Customers,45488.83,0.00,Post the missing processor entry PROC-20260924,approval controller; status proposed
+PROPOSED-E01,2026-09-30,PROPOSED_NOT_APPROVED,5100,Network & Scheme Fees (MTD),122.69,0.00,Post the missing processor entry PROC-20260924,approval controller; status proposed
+PROPOSED-E01,2026-09-30,PROPOSED_NOT_APPROVED,2105,Mastercard Settlement Payable,0.00,44884.41,Post the missing processor entry PROC-20260924,approval controller; status proposed
+PROPOSED-E01,2026-09-30,PROPOSED_NOT_APPROVED,4100,Interchange Revenue (MTD),0.00,727.11,Post the missing processor entry PROC-20260924,approval controller; status proposed
+PROPOSED-E02,2026-09-30,PROPOSED_NOT_APPROVED,1210,Card Receivable - Customers,45899.81,0.00,Post PROC-20260930 on its clearing day 30-Sep and reverse the 01-Oct posting in October,approval controller; status proposed
+PROPOSED-E02,2026-09-30,PROPOSED_NOT_APPROVED,5100,Network & Scheme Fees (MTD),192.47,0.00,Post PROC-20260930 on its clearing day 30-Sep and reverse the 01-Oct posting in October,approval controller; status proposed
+PROPOSED-E02,2026-09-30,PROPOSED_NOT_APPROVED,2105,Mastercard Settlement Payable,0.00,45331.47,Post PROC-20260930 on its clearing day 30-Sep and reverse the 01-Oct posting in October,approval controller; status proposed
+PROPOSED-E02,2026-09-30,PROPOSED_NOT_APPROVED,4100,Interchange Revenue (MTD),0.00,760.81,Post PROC-20260930 on its clearing day 30-Sep and reverse the 01-Oct posting in October,approval controller; status proposed
+PROPOSED-E03,2026-09-30,PROPOSED_NOT_APPROVED,1250,Receivable from Mastercard,40616.94,0.00,Recover the duplicate bank debit BS0018,approval controller; status proposed
+PROPOSED-E03,2026-09-30,PROPOSED_NOT_APPROVED,2105,Mastercard Settlement Payable,0.00,40616.94,Recover the duplicate bank debit BS0018,approval controller; status proposed
+PROPOSED-E04,2026-09-30,PROPOSED_NOT_APPROVED,2900,Suspense - Unidentified Receipts,12500.00,0.00,Clear suspense receipt BS0022 to the customer receivable,approval controller; status proposed-conditional
+PROPOSED-E04,2026-09-30,PROPOSED_NOT_APPROVED,1210,Card Receivable - Customers,0.00,12500.00,Clear suspense receipt BS0022 to the customer receivable,approval controller; status proposed-conditional
+PROPOSED-E05,2026-09-30,PROPOSED_NOT_APPROVED,5100,Network & Scheme Fees (MTD),3250.00,0.00,"Accrue the Mastercard program invoice by line item (Cross-border assessment adjustment: variable cost, no sub-account in the chart, so on 5100; Network access fee, BIN sponsorship & licensing, Brand & program fee: fixed programme cost; reverse on 1-Oct)",approval standard; status proposed
+PROPOSED-E05,2026-09-30,PROPOSED_NOT_APPROVED,5100,Network & Scheme Fees (MTD),2000.00,0.00,"Accrue the Mastercard program invoice by line item (Cross-border assessment adjustment: variable cost, no sub-account in the chart, so on 5100; Network access fee, BIN sponsorship & licensing, Brand & program fee: fixed programme cost; reverse on 1-Oct)",approval standard; status proposed
+PROPOSED-E05,2026-09-30,PROPOSED_NOT_APPROVED,5100,Network & Scheme Fees (MTD),1862.30,0.00,"Accrue the Mastercard program invoice by line item (Cross-border assessment adjustment: variable cost, no sub-account in the chart, so on 5100; Network access fee, BIN sponsorship & licensing, Brand & program fee: fixed programme cost; reverse on 1-Oct)",approval standard; status proposed
+PROPOSED-E05,2026-09-30,PROPOSED_NOT_APPROVED,5100,Network & Scheme Fees (MTD),1300.00,0.00,"Accrue the Mastercard program invoice by line item (Cross-border assessment adjustment: variable cost, no sub-account in the chart, so on 5100; Network access fee, BIN sponsorship & licensing, Brand & program fee: fixed programme cost; reverse on 1-Oct)",approval standard; status proposed
+PROPOSED-E05,2026-09-30,PROPOSED_NOT_APPROVED,2150,Accrued Network Fees,0.00,8412.30,"Accrue the Mastercard program invoice by line item (Cross-border assessment adjustment: variable cost, no sub-account in the chart, so on 5100; Network access fee, BIN sponsorship & licensing, Brand & program fee: fixed programme cost; reverse on 1-Oct)",approval standard; status proposed
+PROPOSED-E06,2026-09-30,PROPOSED_NOT_APPROVED,2105,Mastercard Settlement Payable,751.93,0.00,Correct processor errors: fx rate diff,approval standard; status proposed
+PROPOSED-E06,2026-09-30,PROPOSED_NOT_APPROVED,4100,Interchange Revenue (MTD),11.83,0.00,Correct processor errors: fx rate diff,approval standard; status proposed
+PROPOSED-E06,2026-09-30,PROPOSED_NOT_APPROVED,1210,Card Receivable - Customers,0.00,762.72,Correct processor errors: fx rate diff,approval standard; status proposed
+PROPOSED-E06,2026-09-30,PROPOSED_NOT_APPROVED,5100,Network & Scheme Fees (MTD),0.00,1.04,Correct processor errors: fx rate diff,approval standard; status proposed
+PROPOSED-E07,2026-09-30,PROPOSED_NOT_APPROVED,2105,Mastercard Settlement Payable,2502.45,0.00,Correct processor errors: sign flip,approval standard; status proposed
+PROPOSED-E07,2026-09-30,PROPOSED_NOT_APPROVED,4100,Interchange Revenue (MTD),39.38,0.00,Correct processor errors: sign flip,approval standard; status proposed
+PROPOSED-E07,2026-09-30,PROPOSED_NOT_APPROVED,1210,Card Receivable - Customers,0.00,2540.18,Correct processor errors: sign flip,approval standard; status proposed
+PROPOSED-E07,2026-09-30,PROPOSED_NOT_APPROVED,5100,Network & Scheme Fees (MTD),0.00,1.65,Correct processor errors: sign flip,approval standard; status proposed
+PROPOSED-E08,2026-09-30,PROPOSED_NOT_APPROVED,2105,Mastercard Settlement Payable,737.29,0.00,Correct processor errors: amount diff,approval standard; status proposed
+PROPOSED-E08,2026-09-30,PROPOSED_NOT_APPROVED,4100,Interchange Revenue (MTD),11.59,0.00,Correct processor errors: amount diff,approval standard; status proposed
+PROPOSED-E08,2026-09-30,PROPOSED_NOT_APPROVED,1210,Card Receivable - Customers,0.00,747.93,Correct processor errors: amount diff,approval standard; status proposed
+PROPOSED-E08,2026-09-30,PROPOSED_NOT_APPROVED,5100,Network & Scheme Fees (MTD),0.00,0.95,Correct processor errors: amount diff,approval standard; status proposed
+PROPOSED-E09,2026-09-30,PROPOSED_NOT_APPROVED,2105,Mastercard Settlement Payable,3593.63,0.00,Correct processor errors: processor duplicate,approval standard; status proposed
+PROPOSED-E09,2026-09-30,PROPOSED_NOT_APPROVED,4100,Interchange Revenue (MTD),61.41,0.00,Correct processor errors: processor duplicate,approval standard; status proposed
+PROPOSED-E09,2026-09-30,PROPOSED_NOT_APPROVED,1210,Card Receivable - Customers,0.00,3640.35,Correct processor errors: processor duplicate,approval standard; status proposed
+PROPOSED-E09,2026-09-30,PROPOSED_NOT_APPROVED,5100,Network & Scheme Fees (MTD),0.00,14.69,Correct processor errors: processor duplicate,approval standard; status proposed
+PROPOSED-E10,2026-09-30,PROPOSED_NOT_APPROVED,2105,Mastercard Settlement Payable,9127.92,0.00,Correct processor errors: processor only,approval standard; status proposed-conditional
+PROPOSED-E10,2026-09-30,PROPOSED_NOT_APPROVED,4100,Interchange Revenue (MTD),143.52,0.00,Correct processor errors: processor only,approval standard; status proposed-conditional
+PROPOSED-E10,2026-09-30,PROPOSED_NOT_APPROVED,1210,Card Receivable - Customers,0.00,9259.40,Correct processor errors: processor only,approval standard; status proposed-conditional
+PROPOSED-E10,2026-09-30,PROPOSED_NOT_APPROVED,5100,Network & Scheme Fees (MTD),0.00,12.04,Correct processor errors: processor only,approval standard; status proposed-conditional
+PROPOSED-E11,2026-09-30,PROPOSED_NOT_APPROVED,1210,Card Receivable - Customers,2066.18,0.00,Correct processor errors: mastercard only,approval standard; status proposed
+PROPOSED-E11,2026-09-30,PROPOSED_NOT_APPROVED,5100,Network & Scheme Fees (MTD),11.72,0.00,Correct processor errors: mastercard only,approval standard; status proposed
+PROPOSED-E11,2026-09-30,PROPOSED_NOT_APPROVED,2105,Mastercard Settlement Payable,0.00,2041.36,Correct processor errors: mastercard only,approval standard; status proposed
+PROPOSED-E11,2026-09-30,PROPOSED_NOT_APPROVED,4100,Interchange Revenue (MTD),0.00,36.54,Correct processor errors: mastercard only,approval standard; status proposed

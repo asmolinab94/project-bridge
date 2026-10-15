@@ -1,0 +1,200 @@
+{
+  "code_version": "ace29738b428ea47cec0ba7255e5ba937460ecdc",
+  "generated_at": "2026-10-15T22:57:07+00:00",
+  "input_sha256": {
+    "bridge_account_statement.csv": "ca62dc27af9a71c58611b679e4101e5267778c98f6c9c5e82b3c64cf3c39a2ed",
+    "close_checklist.csv": "92c9f9d438a963b6709896fa096a8165956b2a06c79490f0c264cd4046b4b8a7",
+    "customers.csv": "a3d95dd240b5726f694e49e88321e17c2caa373fdc9bc256ffa505a5fbb9ce43",
+    "fx_rates_daily.csv": "84953f765dae41144a91fba4e96fee8ba254011b37d3d2a3aa267eb847d96d1c",
+    "gl_journal_lines.csv": "1d98d3c2de87870dce2151c9990c51271b0efbe05f219f230789729bb60eafee",
+    "gl_opening_balances.csv": "28c9f6301f2c45ba2c07dc8abaf45fc66ca4da0c92b4e7493a7d7f57eaa73c34",
+    "mastercard_clearing_detail.csv": "68e035f40bc34e5aa30698f357ce2e39bbfba40a20407391abdfd6da37c595fa",
+    "mastercard_daily_settlement_summary.csv": "42b152a4298c53885ee6527f037a1a9d5647a673044bb79a7c3a90a1e5a6b9f4",
+    "mastercard_fee_notice.txt": "fd1cd61e2504965b7177902857e0a3025babeb0127a0490d0d79f0e798dc466d",
+    "processor_transactions.csv": "7f75928a1e2c65217637963a7e4138ef862d7b1bb2aa22f549e67874f6ae0d3a",
+    "treasury_email_thread.txt": "4aa46dc5d63ab7ee5bcdcf34a6b66b9a2336388d5f1bf87a8a016f74cf819c97"
+  },
+  "files": {
+    "bridge_account_statement.csv": {
+      "status": "read",
+      "rows": 33,
+      "dates": {
+        "posting_date": {
+          "first": "2026-09-01",
+          "last": "2026-10-02"
+        },
+        "value_date": {
+          "first": "2026-09-01",
+          "last": "2026-10-02"
+        }
+      }
+    },
+    "close_checklist.csv": {
+      "status": "read",
+      "rows": 26,
+      "dates": {}
+    },
+    "customers.csv": {
+      "status": "read",
+      "rows": 36,
+      "dates": {}
+    },
+    "fx_rates_daily.csv": {
+      "status": "read",
+      "rows": 120,
+      "dates": {
+        "date": {
+          "first": "2026-08-28",
+          "last": "2026-10-06"
+        }
+      }
+    },
+    "gl_journal_lines.csv": {
+      "status": "read",
+      "rows": 146,
+      "dates": {
+        "posting_date": {
+          "first": "2026-09-01",
+          "last": "2026-10-02"
+        }
+      }
+    },
+    "gl_opening_balances.csv": {
+      "status": "read",
+      "rows": 11,
+      "dates": {}
+    },
+    "mastercard_clearing_detail.csv": {
+      "status": "read",
+      "rows": 3365,
+      "dates": {
+        "clearing_date": {
+          "first": "2026-09-01",
+          "last": "2026-10-02"
+        },
+        "settlement_date": {
+          "first": "2026-09-01",
+          "last": "2026-10-02"
+        }
+      }
+    },
+    "mastercard_daily_settlement_summary.csv": {
+      "status": "read",
+      "rows": 24,
+      "dates": {
+        "settlement_date": {
+          "first": "2026-08-31",
+          "last": "2026-10-02"
+        }
+      }
+    },
+    "mastercard_fee_notice.txt": {
+      "status": "read",
+      "rows": 4,
+      "dates": {}
+    },
+    "processor_invoice.txt": {
+      "status": "missing",
+      "rows": 0,
+      "dates": {}
+    },
+    "processor_transactions.csv": {
+      "status": "read",
+      "rows": 3162,
+      "dates": {
+        "auth_date": {
+          "first": "2026-08-29",
+          "last": "2026-10-01"
+        },
+        "clearing_date": {
+          "first": "2026-09-01",
+          "last": "2026-09-30"
+        }
+      }
+    },
+    "treasury_email_thread.txt": {
+      "status": "read",
+      "rows": 8,
+      "dates": {
+        "sent_on": {
+          "first": "2026-09-21",
+          "last": "2026-10-02"
+        }
+      }
+    }
+  },
+  "inputs_not_read": [
+    "processor invoice"
+  ],
+  "totals": {
+    "leg1_difference_usd": "15600.17",
+    "leg1_by_type": {
+      "processor_duplicate": "3593.63",
+      "amount_diff": "737.29",
+      "sign_flip": "2502.45",
+      "fx_rate_diff": "751.93",
+      "month_cutoff": "928.31",
+      "processor_only": "9127.92",
+      "mastercard_only": "-2041.36"
+    },
+    "unexplained_total_usd": "0.00",
+    "unexplained_escalates": "false",
+    "exceptions_by_class": {
+      "data_issue": "131",
+      "real_error": "124",
+      "timing": "7"
+    },
+    "proposed_entries": "11",
+    "checks_failed": "5",
+    "matches": {
+      "1": {
+        "processor_rows": {
+          "count": "3117",
+          "usd": "924303.45"
+        },
+        "mastercard_rows": {
+          "count": "3113",
+          "usd": "909419.05"
+        },
+        "matched_equal": {
+          "count": "2997",
+          "usd": "881142.94"
+        },
+        "matched_diff": {
+          "count": "111",
+          "usd": "4919.98"
+        },
+        "processor_duplicate": {
+          "count": "6",
+          "usd": "3593.63"
+        },
+        "processor_only": {
+          "count": "3",
+          "usd": "9127.92"
+        },
+        "mastercard_only": {
+          "count": "5",
+          "usd": "-2041.36"
+        }
+      },
+      "2": {
+        "settlement_days": {
+          "count": "22",
+          "usd": "968096.50"
+        },
+        "paired": {
+          "count": "22",
+          "usd": "968096.50"
+        },
+        "unpaired": {
+          "count": "0",
+          "usd": "0.00"
+        },
+        "duplicate_debits": {
+          "count": "1",
+          "usd": "40616.94"
+        }
+      }
+    }
+  }
+}
