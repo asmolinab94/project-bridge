@@ -15,7 +15,8 @@ AI was used at each step. The code is in `bridge/`, the spec, plan and tasks in 
   Each is the brief an agent was dispatched against;
   some agents also received a longer prompt that is not included. The date in a brief's id is the date its numbering
   series started; some were issued on the evening of 14 October. B-2026-10-15-04 was withdrawn and never sent. The
-  brief that copied these files, its review and the brief for the presentation materials are not included.
+  brief that copied these files, its review, the brief that closed the spec and the brief for the presentation
+  materials are not included.
 - `process/reviews/` - fresh-context checks: a separate agent, without the conversation that produced the work,
   reviewed it and wrote what it found. Later reviews check that earlier findings were fixed. From B-2026-10-15-68 on,
   the session wrote the review file from the reviewer's report, and some reviews exist only as entries in the AI usage

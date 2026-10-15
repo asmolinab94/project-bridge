@@ -83,11 +83,11 @@ translation, not to this reconciliation.
   types with owner/action/message, proposed entries (also as an ERP import file marked not approved), balances, cash
   reconciliation, close tracker with owner roles and the people the email thread names, treasury view, and the USD
   each pending action resolves.
-- **Written, not built:** live connections to the processor, Mastercard, the bank, the GL, email and Slack (in the
-  path-to-production note); target balance and the cost of idle cash; margin by product, customer and country; two
-  agents for a day-zero close.
-- **Cut:** shared state — owner, status and comment live in the analyst's browser and are exported to CSV; production
-  needs a shared store. Posting — nothing is posted; a different person approves.
+- **Left out by design:** posting — nothing is posted; a different person approves.
+- **Left out for time (written, not built):** shared state — owner, status and comment live in the analyst's browser
+  and are exported to CSV, and production needs a shared store; live connections to the processor, Mastercard, the
+  bank, the GL, email and Slack (in the path-to-production note); target balance and the cost of idle cash; margin by
+  product, customer and country; two agents for a day-zero close.
 
 ## Main risks
 

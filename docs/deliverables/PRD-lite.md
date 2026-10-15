@@ -30,9 +30,10 @@ traced to a source row; Treasury owns settlement, cash and funding.
 coverage and an illustrative weekly transfer; an ERP import file marked not approved; close tasks with the owner
 role and, where the email thread names one, the person.
 
-**Left out.** *Cut:* shared notes (they live in the analyst's browser) and posting (never: people approve and post).
-*Written, not built:* live connections to sources, email and Slack; margin by customer and country; two agents for a
-day-zero close, one answering questions with citations, one proposing rules with their tests for the Controller.
+**Left out.** *By design:* posting — people approve and post. *For time (written, not built):* shared notes (today
+they live in the analyst's browser); live connections to sources, email and Slack; margin by customer and country; two
+agents for a day-zero close, one answering questions with citations, one proposing rules with their tests for the
+Controller.
 
 **Risks**
 

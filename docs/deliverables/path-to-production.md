@@ -71,8 +71,8 @@ rules and tests; a rule change needs the Controller. No Engineering ask until th
 
 Analyst notes live in one browser (fix: a shared table keyed by business reference). Each run stands alone (fix:
 compare runs, with age). Email and Slack sit outside the tool (fix: replies read into the exception propose a status
-change the owner accepts; they never close or post by themselves). **Cut to fit the time:** logins, shared notes and
-posting (never, by policy); written, not built: live connections, the margin view and the agents below.
+change the owner accepts; they never close or post by themselves). **Cut to fit the time:** logins and shared notes;
+written, not built: live connections, the margin view and the agents below. Posting is out by design, never by time.
 
 ## Optional: path to a day-zero close (proposal, not built)
 
