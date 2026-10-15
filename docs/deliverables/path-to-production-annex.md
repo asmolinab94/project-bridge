@@ -8,8 +8,9 @@ September statements went out (`close_checklist.csv`, T24, Done) from a receivab
 refunds were billed as purchases (USD 2,540.18, 4 customers), duplicates billed twice (USD 3,640.35), a stale BRL rate
 overcharged 14 customers (USD 762.72), and five Mastercard-only transactions were never billed (USD 2,066.18)
 (`proposed_entries.csv`, 1210 lines of E06, E07, E09, E11). The entries fix the ledger, not the customer. Next step,
-outside this tool: Billing, T24's owner, issues credit notes and re-bills from the same exception rows, which carry
-the customer.
+outside this tool: Billing, T24's owner, issues credit notes and re-bills from the same exception rows, which link to
+the customer's processor row; the five Mastercard-only transactions have no processor row, so Billing first asks the
+processor to identify the customer from the card (last four digits).
 
 ## B. The USD 400,000 prefunding is in transit, and how we know
 

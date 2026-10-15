@@ -2,12 +2,18 @@
 
 > Clara asks for it: the sequence of prompts or a chat export, plus a note on what was verified by hand and what the
 > AI got wrong. Filled in while working, not at the end.
+>
+> Reading notes. Names in backticks that are not case files or public-repository paths refer to internal working
+> notes (most in Spanish), which are not part of the submission. Commit ids before c68e35d belong to the private
+> working repository; the public repository was published with a fresh history, so those ids cannot be opened there.
+> No raw chat transcript is attached: the conversations are in Spanish and available on request. The first working
+> session ran from the evening of 14 October past midnight; the entries follow the order the work happened.
 
 ## 2026-10-14
 
-- Claude Code downloaded the attachments from the CFO's email, unzipped them and summarised the brief in `CASO.md`.
+- Claude Code downloaded the attachments from the CFO's email, unzipped them and summarised the brief in a case summary note.
   Verified by hand: pending.
-- Claude Code (main session) read the full PDF brief and confirmed the summary in `CASO.md` matches it. It read the
+- Claude Code (main session) read the full PDF brief and confirmed the case summary matches it. It read the
   data dictionary, the policy, the Treasury thread and the Mastercard notice.
 - The project was opened with Andrés's workflow: investigation proposal, project charter with a deliverables board,
   decision log.
@@ -24,12 +30,12 @@
 - **Andrés's check by hand**: reviewing `mastercard_clearing_detail.csv`, the net did not add up for him as amount −
   interchange − scheme fee. The session checked all 3,365 rows: the net is amount − interchange **+** scheme fee in
   every one (as the data dictionary defines it); the local→USD conversion is exact in every one. The difference
-  Andrés saw is twice the scheme fee (6,377.92 in September). No money is missing.
+  Andrés saw is twice the scheme fee (2 × 3,188.96 = 6,377.92 in September). No money is missing.
 - Andrés defined the approach: a clean input model and gap alerts before reconciling; exception types with owner,
   action and predefined message.
 - Andrés proposed the daily summary vs detail control by settlement date. The session ran it: amount and count agree
   on all 23 days; 31-Aug is only in the summary (the detail starts on 1-Sep). Kept as a gap alert.
-- Claude Code drafted the scope document (`entrega/01-PRD-lite.md`) with Andrés's approach and decisions. Pending:
+- Claude Code drafted the scope document (the PRD-lite) with Andrés's approach and decisions. Pending:
   Andrés's review.
 - Andrés asked whether the Mastercard invoice creates ledger movements and whether they are itemised. The session
   checked the ledger, the statement and the close checklist: a single bank entry for the total (1-Oct, account 5100,
@@ -46,8 +52,8 @@
   0.92M; 34 working days of coverage at 1-Oct) and proposed framing it as a question to Treasury, not a judgement.
 - Andrés proposed that alerts and the agent recommend when to fund. The session computed daily and weekly burn and
   noted that the next day's debit is already known (today's Mastercard settlement). Open questions saved in
-  `PREGUNTAS-pendientes.md`.
-- Andrés asked to read the policy one item at a time and turn it into rules. The session wrote `REGLAS-politica.md`
+  an open-questions note.
+- Andrés asked to read the policy one item at a time and turn it into rules. The session wrote a policy-rules note
   (16 policy rules + 2 posting rules) with the status of each in the data. It also checked that there are no full
   card numbers: clean; it noted that mistyped references would trigger a naive detector. It flagged a policy
   ambiguity: approval by the "net" amount of an entry that always sums to zero.
@@ -59,10 +65,10 @@
   requirement.
 - Andrés answered questions in the pending-questions file. The AI updated the scope document: pre-checks, policy as
   rules, Treasury view with a funding recommendation, a living scope list, approval risk.
-- 2026-10-15: Claude Code drafted the tool's spec and launched two agents in parallel: one reviews the spec critically
+- After midnight (15 October): Claude Code drafted the tool's spec and launched two agents in parallel: one reviews the spec critically
   in a context without this conversation (stronger model), the other researches Clara's public visual identity.
 - An agent found Clara's public brand guide (2026). The session checked colours and fonts against the site's
-  stylesheet and summarised their use in `MARCA-clara.md`; it proposed not using the logo.
+  stylesheet and summarised their use in a brand note; it proposed not using the logo.
 - **What the AI got wrong (the spec)**: the critical review, done by another agent without this conversation, found
   that the main session had written two checks that would fail: "balances sum to zero" listing only 7 of the 11
   accounts, and "no card number in the output" without normalising the raw references. Also: an ambiguous 250
@@ -213,7 +219,7 @@
   the data and opened the page in Chrome: the red "figures are not reliable" warning shows, and failed pre-checks go
   from 6 to 7, the new one naming T05. A fresh Opus reviewer that did not take part in the work was dispatched next.
 
-- **2026-10-15 (night) — Fifth repair round, drafts, page redesign started.** Andrés approved the work order; the session ran it. (1) Fifth repair round, tests first (Opus, commits 883ec8e and 386d086) then code
+- **2026-10-15 (early hours) — Fifth repair round, drafts, page redesign started.** Andrés approved the work order; the session ran it. (1) Fifth repair round, tests first (Opus, commits 883ec8e and 386d086) then code
   (Sonnet, 2797636): a USD conversion error made by the processor now gets a proposed correction; the action
   sentences say who posts what. The test-writing agent caught that the session's own plan sentence for an unpaid
   settlement contradicted the case policy (escalation goes to the Controller after 5 business days, not to
@@ -224,7 +230,7 @@
   (itemised invoice accrual, Treasury view) are not built. A fresh reviewer checks the drafts. (3) Page redesign per
   Andrés: a summary by category on each tab and all rows in one table, no side panel (plan 986bc7e); tests first.
 
-- **2026-10-15/16 — Page redesign built; extras planned.** Tests first (Opus, 3b66755 + 3fc5b35: the session asked
+- **2026-10-15 (early hours, continued) — Page redesign built; extras planned.** Tests first (Opus, 3b66755 + 3fc5b35: the session asked
   the test agent to drop a meaningless cash total of 3,095,931.10 before any code), then code (Opus, 1053476). The
   session verified: tests untouched, 369/369 green, and checked the page in Chrome at laptop width (filtering by a
   type gave 95 rows summing to 751.93, equal to the summary). Andrés answered the open points: build the itemised
@@ -258,7 +264,7 @@
   proposes each rule with its test and the Controller approves it — Andrés's idea, the session's condition). Checking
   every figure against the frozen run, the session found two errors already in the draft: it said 6 pre-checks fail
   (5 do) and that the demo ships an API key (no agent is built). The note had grown to ~1,900 words against the case's
-  1–2 pages; Andrés chose to move the detail to an annex (`entrega/03-annex.md`); the session measured the result
+  1–2 pages; Andrés chose to move the detail to an annex; the session measured the result
   printed (A4, 11 pt): 2 pages. Andrés found the page "muy plano" (very flat) and asked for a modern style "taking
   [another company] as an example"; the session pushed back on borrowing another company's brand in a submission, and
   he chose the feel only, with an own palette. Restyle runs style-only, with the outputs other than the page required
@@ -272,20 +278,20 @@
   preparer and approver (it leaves them empty by design); the note said two processor entries were missing (one was
   missing, one posted a day late) and described the login-based approval as if built; the annex misdescribed what the Treasury balance excludes. All fixed the same day.
 
-- **2026-10-15 (session 3) — Presentation documents updated.** The presentation documents were updated.
+- **2026-10-15 (session 3) — Presentation documents updated.** Only order and wording changed; no figure was touched.
 
 - **2026-10-15 (session 3) — Brief re-read, email drafted, package started.** Re-reading the case brief, the session flagged where the plan had drifted from it. Andrés chose to declare real hours. The session drafted the email to the CFO
-  (`entrega/email-to-cfo-DRAFT.md`, not sent) and copied the frozen run's CSVs into `entrega/package/outputs/` (the
+  (not sent) and copied the frozen run's CSVs into the submission folder (the
   two entry files' SHA-256 match the freeze). A first wording of the email said the payable was wrong "mainly"
   because of the missing 24-Sep journal; the session corrected it before showing it, since that journal is one of
   three causes of similar size.
 
 - **2026-10-15 (session 3) — Hours measured, clean repository, Gmail draft.** The session measured time from the
-  session transcripts: 107 messages from Andrés across 11 working windows, about 9 hours of his attention (8.6 counting
-  windows of messages less than 30 minutes apart, 9.7 counting each gap up to 15 minutes); 64 agent runs. (The agent figures first given
-  here, 19.3 agent-hours and 14.8 hours of wall-clock, counted each agent from its first to its last message, idle
-  stretches included; Andrés questioned them, and the corrected figures are in the next entry but one.) It prepared a clean copy of the
-  repository for publication (fresh history, local paths replaced), re-ran the 534 tests and compared the eight CSVs
+  session transcripts: 107 messages from Andrés across 11 working windows, about 9 hours of his attention (8.6
+  counting windows of messages less than 30 minutes apart, 9.7 counting each gap up to 15 minutes); 64 agent runs.
+  (The agent figures first given here, 19.3 agent-hours and 14.8 hours of wall-clock, counted each agent from its
+  first to its last message, idle stretches included; Andrés questioned them, and the corrected figures are two
+  entries below.) It prepared a clean copy of the repository for publication (fresh history, local paths replaced), re-ran the 534 tests and compared the eight CSVs
   byte for byte with the frozen run: identical. It drafted the reply to the CFO in Gmail (not sent).
 
 - **2026-10-15 (session 3) — Published to the wrong GitHub account, then corrected.** The AI published the clean
@@ -342,6 +348,8 @@
   `mastercard_clearing_detail.csv` line 263, same reference MC7396063819339, books it as a REFUND of −248.22;
   (3) `bridge_account_statement.csv` lines 17 and 19 (BS0016, BS0018) carry the same reference BNK324320124 and amount
   40,616.94, and the ledger books both (lines 80–81 and 88–89); (4) on the page, blanking an Assigned person in
-  Reconciliation and reloading keeps it blank. **What the AI got wrong**: its first set of instructions to Andrés
-  named the ledger code as "PROC-20260924"; the real prefix is "PF-". The session caught it re-reading the file before
-  he checked, and corrected the demo script, which carried the same wrong code.
+  Reconciliation and reloading keeps it blank. **What the AI got wrong**: its first instructions to Andrés gave the
+  ledger's journal id as "PROC-20260924". In the ledger the processor's daily journals are "PF-<date>" (the late one
+  is PF-20260930); "PROC-<date>" is only the tool's own label for the processor entry it proposes (E01, E02 and the
+  matching exceptions). The session caught it re-reading the file before Andrés checked, and corrected the demo
+  script, which mixed the two.

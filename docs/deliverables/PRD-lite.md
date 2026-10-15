@@ -14,7 +14,7 @@ traced to a source row; Treasury owns settlement, cash and funding.
 **Success measures** (baseline → target)
 
 - Figures traceable to a source file and row: spreadsheets with no row link → 100 % on screen and in exports.
-- Processor–Mastercard difference: USD 15,600.17 to explain by hand → USD 0.00 residual, split into timing, real
+- Processor–Mastercard difference: USD 15,600.17 (net of interchange and scheme fees) to explain by hand → USD 0.00 residual, split into timing, real
   error and data issue.
 - A missing feed day: found on working day 3 (T02 still in progress) → flagged before reconciling, next business day.
 - Reconciliations ready: working day 5, the Controller's deadline → working day 1, on the path to daily (target).

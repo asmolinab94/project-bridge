@@ -1,6 +1,6 @@
 # Project Bridge — path to production
 
-*Andrés Molina · draft 2026-10-15 · Part 3 of the Clara Finance Engineer case · figures from the tool's run on the
+*Andrés Molina · 2026-10-15 · Part 3 of the Clara Finance Engineer case · figures from the tool's run on the
 case data pack · detail in the annex*
 
 Project Bridge is one Python program that reads the data pack and writes a page plus nine files: 262 exceptions,
