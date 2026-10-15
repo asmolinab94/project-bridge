@@ -301,3 +301,47 @@
   (no gap over 5 minutes between its messages): 8.8 agent-hours, and some agent working during 8.0 clock hours (3.5
   the night of 14 Oct, 4.5 on 15 Oct). Declared figures: about 8 hours of agents working and about 4 hours of Andrés's
   own attention (measured 3.5 to 4.6, before any reading done outside the chat).
+
+- **2026-10-15 (session 3) — Process documents published; spec closed; stranger test.** An agent copied the
+  process documents into the public repository and scrubbed them; two fresh Opus reviews found what the scan missed
+  (presentation content, broken paths, a wrong hours sentence) and, once, that the agent's own report of a passing
+  scan was false. The session also committed once with four scan matches still present (from its own brief) and
+  caught it before any push. The spec was closed as delivered after a fresh review found the change list incomplete.
+  Final check: an agent with no context, given only the public repository and Clara's original zip, followed the
+  README on a Mac: it cloned, ran, and got the page and eight CSVs byte-identical to the frozen run; 534 tests
+  passed. Snag it reported: the README does not say how to get the code. Windows steps not tested.
+
+- **2026-10-15 (session 4) — Simulated Clara panel; two provenance fixes.** At Andrés's request, a fresh Opus agent
+  played Clara's panel (CFO, Controller, Finance Ops, engineering) with only what Clara will receive: the email text,
+  the attachments, Clara's case PDF and zip, and the public repository. It reproduced every output and recomputed
+  eight figures without the tool's code, all matching. It also found two provenance gaps, both fixed by the session:
+  the page had been generated from the private commit (20115bed), not the public one (c68e35d), so it was
+  regenerated from a clean checkout of c68e35d; and the local copy of `mastercard_fee_notice.txt` differed from
+  Clara's zip (a "1. " prefix added to line 1 on 14 Oct, before any work), so its fingerprint did not match the pack.
+  The file was restored from the zip and the page and manifest regenerated; the eight CSVs were unchanged. The
+  session also fixed the repository link in the Gmail draft, which Gmail had wrapped in a google.com redirect. The
+  panel's accounting findings (October reversals missing from the ERP import file, the processor-only entry's
+  evidence text, no invoice accrual, the 3,100 payment from the email thread) went to Andrés for decision. Andrés chose to
+  fix only the evidence text (next entry) and to answer the rest in the presentation, not in code: the October
+  reversals, the invoice accrual and the 3,100 payment remain open.
+
+- **2026-10-15 (session 4) — Processor-only evidence reworded; deliverables cleaned.** Andrés approved one code
+  change after the freeze: E10's evidence text asked the processor to confirm the rows were "valid", which read as a
+  reason not to reverse them. The session's first rewording ("not cleared in September, sent in error or still
+  awaiting settlement") was sent to a fresh Opus review, which found it contradicted the month cut-off rule (late
+  clearing gets no entry) and proposed the final text: the processor confirms the rows were never presented to
+  Mastercard in September and were listed as cleared in error. Only that text changed (4 lines of
+  proposed_entries.csv, 3 of exceptions.csv); 534 tests pass; outputs and page regenerated from the new public commit.
+  The two path-to-production PDFs no longer cite internal file names, and "prompts logged" became "each step recorded
+  in the AI usage log", since no prompt transcript is shipped.
+
+- **2026-10-15 (session 5) — Andrés's hand checks.** The session gave Andrés the exact files and rows; he opened the
+  raw case files himself, outside the tool, and reported all four checks done as described ("Sí." / "Ya lo hice."):
+  (1) `gl_journal_lines.csv` has processor journals PF-20260923 (lines 106–109) and PF-20260925 (lines 114–117) and
+  none for 24-Sep; (2) `processor_transactions.csv` line 179 books PX10000177 as a PURCHASE of 248.22 USD while
+  `mastercard_clearing_detail.csv` line 263, same reference MC7396063819339, books it as a REFUND of −248.22;
+  (3) `bridge_account_statement.csv` lines 17 and 19 (BS0016, BS0018) carry the same reference BNK324320124 and amount
+  40,616.94, and the ledger books both (lines 80–81 and 88–89); (4) on the page, blanking an Assigned person in
+  Reconciliation and reloading keeps it blank. **What the AI got wrong**: its first set of instructions to Andrés
+  named the ledger code as "PROC-20260924"; the real prefix is "PF-". The session caught it re-reading the file before
+  he checked, and corrected the demo script, which carried the same wrong code.
