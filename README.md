@@ -14,6 +14,13 @@ reconciled. Without that statement the cash check fails rather than estimating a
 
 You need Python 3 (3.9 or later) and nothing else: no packages to install, no internet connection.
 
+**0. Get the code**
+
+On the repository's GitHub page (https://github.com/asmolinab94/project-bridge), click the green **Code** button,
+then **Download ZIP**, and unzip it; the folder it creates (`project-bridge-main`) is the code folder these steps
+refer to. If you use git instead: `git clone https://github.com/asmolinab94/project-bridge`. Only a git clone lets
+`run_manifest.json` record which code version produced the outputs; from the ZIP it records `unknown`.
+
 **1. Install Python 3**
 
 - macOS: open Terminal and type `python3 --version`. If it prints a version (3.9 or later), you are done. On a Mac
